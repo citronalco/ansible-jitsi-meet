@@ -12,3 +12,4 @@
     - jitsi_meet_turnserver
     - jitsi_meet_systemd
     - nrpe
+    - unattended_upgrades

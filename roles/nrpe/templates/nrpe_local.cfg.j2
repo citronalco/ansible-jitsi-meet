@@ -1,0 +1,24 @@
+# {{ ansible_managed }}
+
+connection_timeout=600
+command_timeout=600
+
+allowed_hosts=127.0.0.1,{{ nrpe.allowed_hosts | default([]) | join(',') }}
+
+# Disk Space
+command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 15% -c 10% -p /
+
+# systemd Services
+command[check_service_jicofo]=/usr/local/nrpe-plugins/check_systemd_service jicofo
+command[check_service_jitsi-videobridge2]=/usr/local/nrpe-plugins/check_systemd_service jitsi-videobridge2
+command[check_service_prosody]=/usr/local/nrpe-plugins/check_systemd_service prosody
+command[check_service_nginx]=/usr/local/nrpe-plugins/check_systemd_service nginx
+command[check_service_coturn]=/usr/local/nrpe-plugins/check_systemd_service coturn
+
+# prosodyctl check
+command[check_prosodyctl]=sudo /usr/local/nrpe-plugins/check_prosodyctl
+
+# Certificates
+{% for domain in ( [ inventory_hostname ] + ( jitsi.domain_aliases | default([]) ) + ( turns_hostname | default() | list ) ) %}
+command[check_certificate_{{ domain }}]=/usr/lib/nagios/plugins/check_http -C 13,6 --sni --ssl -H {{ domain }}
+{% endfor %}

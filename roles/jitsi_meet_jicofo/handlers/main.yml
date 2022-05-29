@@ -1,0 +1,4 @@
+- name: restart jicofo
+  service:
+    name: jicofo.service
+    state: restarted

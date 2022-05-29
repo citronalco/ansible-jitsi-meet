@@ -1,0 +1,184 @@
+-- {{ ansible_managed }}
+
+plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
+
+-- domain mapper options, must at least have domain base set to use the mapper
+muc_mapper_domain_base = "{{ inventory_hostname }}";
+
+turncredentials_secret = "{{ turnpwd }}";
+turncredentials = {
+     { type = "stun", host = "{{ inventory_hostname }}", port = 3478 },
+     { type = "turn", host = "{{ inventory_hostname }}", port = 3478, transport = "udp", ttl = 86400 },
+{% if turns_hostname is defined %}
+     { type = "turns", host = "{{ turns_hostname }}", port = 443, transport = "tcp", ttl = 86400 },
+{% else %}
+     { type = "turns", host = "{{ inventory_hostname }}", port = 5349, transport = "tcp", ttl = 86400 },
+{% endif %}
+};
+
+cross_domain_bosh = false;
+consider_bosh_secure = true;
+-- https_ports = { }; -- Remove this line to prevent listening on port 5284
+
+-- by default prosody 0.12 sends cors headers, if you want to disable it uncomment the following (the config is available on 0.12.1)
+--http_cors_override = {
+--    bosh = {
+--        enabled = false;
+--    };
+--    websocket = {
+--        enabled = false;
+--    };
+--}
+
+-- https://ssl-config.mozilla.org/#server=haproxy&version=2.1&config=intermediate&openssl=1.1.0g&guideline=5.4
+ssl = {
+    protocol = "tlsv1_2+";
+    ciphers = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
+}
+
+unlimited_jids = {
+    "focus@auth.{{ inventory_hostname }}",
+    "jvb@auth.{{ inventory_hostname }}"
+}
+
+VirtualHost "{{ inventory_hostname }}"
+    -- enabled = false -- Remove this line to enable this host
+    authentication = "{{ jitsi.authenticator | default("anonymous") }}"
+    -- Properties below are modified by jitsi-meet-tokens package config
+    -- and authentication above is switched to "token"
+    --app_id="example_app_id"
+    --app_secret="example_app_secret"
+    -- Assign this host a certificate for TLS, otherwise it would use the one
+    -- set in the global section (if any).
+    -- Note that old-style SSL on port 5223 only supports one certificate, and will always
+    -- use the global one.
+    ssl = {
+        key = "/etc/prosody/certs/{{ inventory_hostname }}.key";
+        certificate = "/etc/prosody/certs/{{ inventory_hostname }}.crt";
+    }
+    av_moderation_component = "avmoderation.{{ inventory_hostname }}"
+    speakerstats_component = "speakerstats.{{ inventory_hostname }}"
+    conference_duration_component = "conferenceduration.{{ inventory_hostname }}"
+    -- we need bosh
+    modules_enabled = {
+        "bosh";
+        "pubsub";
+        "ping"; -- Enable mod_ping
+        "speakerstats";
+        "turncredentials";
+        "external_services";
+        "conference_duration";
+        "muc_lobby_rooms";
+        "muc_breakout_rooms";
+        "av_moderation";
+    }
+    c2s_require_encryption = false
+    lobby_muc = "lobby.{{ inventory_hostname }}"
+    breakout_rooms_muc = "breakout.{{ inventory_hostname }}"
+    main_muc = "conference.{{ inventory_hostname }}"
+    muc_lobby_whitelist = { "recorder.{{ inventory_hostname }}" } -- Here we can whitelist jibri to enter lobby enabled rooms
+
+{% if jitsi.guests_allowed is defined and jitsi.guests_allowed %}
+-- VirtualHost wird benötigt falls nur authentifizierte Benutzer Meetings starten dürfen, aber auch unauthentifizierte Gäste teilnehmen können sollen
+VirtualHost "guest.{{ inventory_hostname }}"
+    -- enabled = false
+    authentication = "anonymous"
+    c2s_require_encryption = false
+
+{% endif %}
+Component "conference.{{ inventory_hostname }}" "muc"
+    restrict_room_creation = true
+    storage = "memory"
+    modules_enabled = {
+        "muc_meeting_id";
+        "muc_domain_mapper";
+        "polls";
+        --"token_verification";
+        "muc_rate_limit";
+    }
+    admins = { "focus@auth.{{ inventory_hostname }}" }
+    muc_room_locking = false
+    muc_room_default_public_jids = true
+
+Component "breakout.{{ inventory_hostname }}" "muc"
+    restrict_room_creation = true
+    storage = "memory"
+    modules_enabled = {
+        "muc_meeting_id";
+        "muc_domain_mapper";
+        --"token_verification";
+        "muc_rate_limit";
+        "polls";
+    }
+    admins = { "focus@auth.{{ inventory_hostname }}" }
+    muc_room_locking = false
+    muc_room_default_public_jids = true
+
+-- internal muc component
+Component "internal.auth.{{ inventory_hostname }}" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "ping";
+    }
+    admins = { "focus@auth.{{ inventory_hostname }}", "jvb@auth.{{ inventory_hostname }}" }
+    muc_room_locking = false
+    muc_room_default_public_jids = true
+
+VirtualHost "auth.{{ inventory_hostname }}"
+    ssl = {
+        key = "/etc/prosody/certs/auth.{{ inventory_hostname }}.key";
+        certificate = "/etc/prosody/certs/auth.{{ inventory_hostname }}.crt";
+    }
+    modules_enabled = {
+        "limits_exception";
+    }
+    authentication = "internal_hashed"
+
+-- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
+Component "focus.{{ inventory_hostname }}" "client_proxy"
+    target_address = "focus@auth.{{ inventory_hostname }}"
+
+Component "speakerstats.{{ inventory_hostname }}" "speakerstats_component"
+    muc_component = "conference.{{ inventory_hostname }}"
+
+Component "conferenceduration.{{ inventory_hostname }}" "conference_duration_component"
+    muc_component = "conference.{{ inventory_hostname }}"
+
+Component "avmoderation.{{ inventory_hostname }}" "av_moderation_component"
+    muc_component = "conference.{{ inventory_hostname }}"
+
+Component "lobby.{{ inventory_hostname }}" "muc"
+    storage = "memory"
+    restrict_room_creation = true
+    muc_room_locking = false
+    muc_room_default_public_jids = true
+    modules_enabled = {
+        "muc_rate_limit";
+        "polls";
+    }
+
+-- Enabled dial-in for JaaS customers
+-- Note: make sure you have the following packages installed: lua-basexx, liblua5.3-dev, libssl-dev, luarocks
+-- and execute $ sudo luarocks install luajwtjitsi 3.0-0
+VirtualHost "jigasi.meet.jitsi"
+    enabled = false -- JaaS customers remove this line
+    modules_enabled = {
+      "ping";
+      "bosh";
+    }
+    authentication = "token"
+    app_id = "jitsi";
+    asap_key_server = "https://jaas-public-keys.jitsi.net/jitsi-components/prod-8x8"
+    asap_accepted_issuers = { "jaas-components" }
+    asap_accepted_audiences = { "jigasi.{{ inventory_hostname }}" }
+
+-- Enable recordings with Jibri
+-- Note: To connect with Jibri you have to create two Prosody users and add them with their passwords to the Jibri configuration:
+--   * recorder@recorder.{{ inventory_hostname }}
+--   * jibri@auth.meet.{{ inventory_hostname }}
+VirtualHost "recorder.{{ inventory_hostname }}"
+    -- enabled = false
+    modules_enabled = {
+        "ping";
+    }
+    authentication = "internal_plain"

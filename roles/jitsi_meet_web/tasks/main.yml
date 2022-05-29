@@ -1,0 +1,74 @@
+- name: Configure Nginx access_log anonymization
+  template:
+    src: anonymize.conf.j2
+    dest: /etc/nginx/conf.d/anonymize.conf
+    mode: 0644
+  notify: reload nginx
+
+- name: Create TURNS/HTTPS reverse proxy configuration
+  template:
+    src: coturn-reverse-proxy.conf.j2
+    dest: /etc/nginx/modules-available/coturn-reverse-proxy.conf
+    mode: 0644
+  notify: reload nginx
+
+- name: Enable TURNS/HTTPS reverse proxy configuration
+  file:
+    src: /etc/nginx/modules-available/coturn-reverse-proxy.conf
+    dest: /etc/nginx/modules-enabled/coturn-reverse-proxy.conf
+    state: link
+  notify: reload nginx
+
+- name: Create Jitsi-Meet site configuration
+  template:
+    src: jitsi-meet-site.conf.j2
+    dest: "/etc/nginx/sites-available/{{ item }}.conf"
+    mode: 0644
+  loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
+  notify: reload nginx
+
+- name: Enable Jitsi-Meet site configuration
+  file:
+    src: "/etc/nginx/sites-available/{{ item }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ item }}.conf"
+    state: link
+  loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
+  notify: reload nginx
+
+- name: Get all enabled site configs
+  find:
+    paths: '/etc/nginx/sites-enabled/'
+    file_type: link
+  register: find_enabledsites
+
+- name: Disable all unneeded site configs
+  file:
+    path: "/etc/nginx/sites-enabled/{{ item.path | basename }}"
+    state: absent
+  loop: "{{ find_enabledsites.files }}"
+  when: item.path | basename not in ( jitsi.domain_aliases | default([]) + [ inventory_hostname ] ) | product(['.conf']) | map('join')
+  notify: reload nginx
+
+- name: Create directory for customizations
+  file:
+    path: "/etc/jitsi/meet/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
+
+- name: Ensure Jitsi-Meet customization file /etc/jitsi/meet/{{ inventory_hostname }}/nginx-override.conf exists
+  template:
+    src: nginx-override.conf.j2
+    dest: "/etc/jitsi/meet/{{ item }}/nginx-override.conf"
+    mode: "0644"
+    force: false
+  loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
+
+- name: Create minimal default Jitsi Meet configuration if none exists
+  template:
+    src: meet-config.js.j2
+    dest: "/etc/jitsi/meet/{{ item }}/config.js"
+    mode: "0644"
+    force: false
+  loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
+

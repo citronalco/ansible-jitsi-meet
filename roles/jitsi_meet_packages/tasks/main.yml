@@ -1,0 +1,25 @@
+- name: Install gpg
+  apt:
+    pkg: [ "gpg", "gpg-agent" ]
+    install_recommends: false
+
+- name: Add apt-key of jisti.org
+  apt_key:
+    url: "https://download.jitsi.org/jitsi-key.gpg.key"
+
+- name: Add jitsi.org repository
+  apt_repository:
+    repo: "deb https://download.jitsi.org stable/"
+    filename: jitsi
+
+- name: Preconfigure hostname used by postinst scripts of jitsi packages
+  debconf:
+    name: jitsi-videobridge
+    question: jitsi-videobridge/jvb-hostname
+    vtype: string
+    value: "{{ inventory_hostname }}"
+
+- name: Install nginx and jisti-meet
+  apt:
+    pkg: [ "nginx-full", "jitsi-meet" ]
+    install_recommends: false

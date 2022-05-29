@@ -1,0 +1,13 @@
+- name: update-ca-certificates
+  command:
+    cmd: update-ca-certificates -f
+
+- name: restart prosody
+  service:
+    name: prosody.service
+    state: restarted
+
+- name: restart jitsi-videobridge2
+  service:
+    name: jitsi-videobridge2.service
+    state: restarted

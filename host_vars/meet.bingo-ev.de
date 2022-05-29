@@ -1,0 +1,32 @@
+admin:
+  email: webmaster@bingo-ev.de
+
+jitsi:
+  # domain_aliases:
+  # Default: leer
+  # Soll dieser Jitsi-Meet-Server auch unter anderen Domainnamen erreichbar sein diese hier eintragen
+  # Die Servereinstellungen (z.B. Authentifizierung, User) sind für alle Domains gleich, die Jitsi-GUI kann aber einzeln in /etc/jitsi/meet/<domainname>/ angepasst werden.
+  #domain_aliases:
+  # - meet.bytewerk.de
+
+  # authenticator:
+  # mögliche Werte: anonymous, internal_hased
+  # Default: anonymous
+  # Mit "anonymous" kann jeder kann Meetings starten, mit "internal_hashed" nur auf Jitsi-Server angelegt Prosody-User
+  # User für "internal_hashed" anlegen mit "prosodyctl register <username> <servername> <passwort>"
+  authenticator: anonymous
+
+  # guests_allowed:
+  # Default: false
+  # Nur wirksam wenn "authenticator" auf "internal_hashed" steht: Sollen auch unauthentifizierte Gäste laufenden Meetings beitreten können?
+  guests_allowed: true
+
+# turns_hostname:
+# Default: leer
+# Falls der TURNS-Server wegen besserer Firmenfirewall-Durchdringung auf Port 443 laufen soll muss hier ein zusätzlicher Domainname angegeben werden, dessen A-Record auf diesen Server zeigt.
+#turns_hostname: turns.bingo-ev.de
+
+nrpe:
+  # list hostnames, IPv4 or IPv6 addresses allowed to query the nrpe server
+  allowed_hosts:
+    - monitoring.bingo-ev.de

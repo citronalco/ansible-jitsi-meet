@@ -1,0 +1,56 @@
+# see https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-quickstart/#generate-a-lets-encrypt-certificate-optional-recommended
+- name: Increase TaskMax
+  lineinfile:
+    path: /etc/systemd/system.conf
+    regexp: DefaultTasksMax=
+    line: DefaultTasksMax=65000
+  notify:
+    - reread systemd configs
+
+- name: Increase NOFILE
+  lineinfile:
+    path: /etc/systemd/system.conf
+    regexp: DefaultLimitNOFILE=
+    line: DefaultLimitNOFILE=65000
+  notify:
+    - reread systemd configs
+
+- name: Increase NPROC
+  lineinfile:
+    path: /etc/systemd/system.conf
+    regexp: DefaultLimitNPROC=
+    line: DefaultLimitNPROC=65000
+  notify:
+    - reread systemd configs
+
+- name: Limit journald logging to 14 days
+  lineinfile:
+    dest: /etc/systemd/journald.conf
+    regexp: "^[#]?MaxRetentionSec"
+    line: "MaxRetentionSec=14day"
+  notify: restart journald
+
+- name: Create directories for systemd overrides
+  file:
+    path: "/etc/systemd/system/{{ item }}.service.d"
+    state: directory
+    mode: "0755"
+  loop:
+   - nginx
+   - prosody
+   - jicofo
+   - jitsi-videobridge2
+   - nagios-nrpe-server
+
+- name: Create systemd overrides to restart services automatically on failure
+  copy:
+    src: restart-on-failure.service
+    dest: /etc/systemd/system/{{ item }}.service.d/restart-on-failure.conf
+  loop:
+   - nginx
+   - prosody
+   - jicofo
+   - jitsi-videobridge2
+   - nagios-nrpe-server
+  notify:
+    - reread systemd configs

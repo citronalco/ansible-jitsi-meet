@@ -1,0 +1,14 @@
+- hosts: jitsi
+  remote_user: root
+  roles:
+    - set_passwords
+    - hostname
+    - jitsi_meet_packages
+    - certbot
+    - jitsi_meet_web
+    - jitsi_meet_prosody
+    - jitsi_meet_jicofo
+    - jitsi_meet_videobridge
+    - jitsi_meet_turnserver
+    - jitsi_meet_systemd
+    - nrpe

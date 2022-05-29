@@ -1,0 +1,12 @@
+# Hook file copies certificate, sets domain name in turnserver.conf, and restarts coturn
+- name: run coturn cert renewal hook
+  environment:
+    RENEWED_DOMAINS: "{{ turns_hostname | default(environment_hostname) }}"
+    RENEWED_LINEAGE: "/etc/letsencrypt/live/{{ turns_hostname | default(environment_hostname) }}"
+  shell:
+    cmd: "/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh"
+
+- name: run nginx cert renewal hook
+  command:
+    cmd: /etc/letsencrypt/renewal-hooks/post/nginx.sh
+

@@ -1,0 +1,86 @@
+- name: Set Hostname in Jicofo config
+  lineinfile:
+    path: "/etc/jitsi/jicofo/config"
+    regexp: '^JICOFO_HOSTNAME='
+    line: "JICOFO_HOSTNAME={{ inventory_hostname }}"
+  notify:
+    - restart jicofo
+
+- name: Set Auth Domain in Jicofo config
+  lineinfile:
+    path: "/etc/jitsi/jicofo/config"
+    regexp: '^JICOFO_AUTH_DOMAIN='
+    line: "JICOFO_AUTH_DOMAIN=auth.{{ inventory_hostname }}"
+  notify:
+    - restart jicofo
+
+- name: Set Hostname in jicofo.conf
+  lineinfile:
+    path: "/etc/jitsi/jicofo/jicofo.conf"
+    regexp: '^(\s*)client-proxy: '
+    backrefs: yes
+    line: '\1client-proxy: focus.{{ inventory_hostname }}'
+  notify:
+    - restart jicofo
+
+- name: Set Trusted-Domains in jicofo.conf
+  lineinfile:
+    path: "/etc/jitsi/jicofo/jicofo.conf"
+    regexp: '^(\s*)trusted-domains: '
+    backrefs: yes
+    line: '\1trusted-domains: [ "recorder.{{ inventory_hostname }}" ]'
+  notify:
+    - restart jicofo
+
+- name: Set Brewery-Jid in jicofo.conf
+  lineinfile:
+    path: "/etc/jitsi/jicofo/jicofo.conf"
+    regexp: '^(\s*)brewery-jid: '
+    backrefs: yes
+    line: '\1brewery-jid: "JvbBrewery@internal.auth.{{ inventory_hostname }}"'
+  notify:
+    - restart jicofo
+
+- name: Enable/disable authentication in jicofo.conf
+  blockinfile:
+    path: "/etc/jitsi/jicofo/jicofo.conf"
+    block: |
+      authentication: {
+        enabled: {{ 'true' if jitsi.authenticator | default('anonymous') == 'internal_hashed' else 'false' }}
+        type: XMPP
+        login-url: {{ inventory_hostname }}
+      }
+    insertafter: 'jicofo {'
+  notify:
+    - restart jicofo
+
+- name: Enable authentication for recording in sip-communicator.properties
+  lineinfile:
+    path: "/etc/jitsi/jicofo/sip-communicator.properties"
+    regexp: '^org.jitsi.jicofo.jibri.BREWERY='
+    line: "org.jitsi.jicofo.jibri.BREWERY=JibriBrewery@internal.auth.{{ inventory_hostname }}"
+    create: yes
+    mode: "0640"
+    owner: "jicofo"
+    group: "jitsi"
+  notify:
+    - restart jicofo
+
+- name: Set timeout for recording in sip-communicator.properties
+  lineinfile:
+    path: "/etc/jitsi/jicofo/sip-communicator.properties"
+    regexp: '^org.jitsi.jicofo.jibri.PENDING_TIMEOUT='
+    line: "org.jitsi.jicofo.jibri.PENDING_TIMEOUT=90"
+    create: yes
+    mode: "0640"
+    owner: "jicofo"
+    group: "jitsi"
+  notify:
+    - restart jicofo
+
+- name: Decrease Jicofo loglevel
+  lineinfile:
+    path: "/etc/jitsi/jicofo/logging.properties"
+    regexp: '^\.level='
+    line: ".level=WARNING"
+  notify: restart jicofo

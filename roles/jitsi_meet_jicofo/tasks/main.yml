@@ -46,7 +46,7 @@
     path: "/etc/jitsi/jicofo/jicofo.conf"
     block: |
       authentication: {
-        enabled: {{ 'true' if jitsi.authenticator | default('anonymous') == 'internal_hashed' else 'false' }}
+        enabled: {{ 'true' if jitsi.authenticator | default('anonymous') in [ 'internal_hashed', 'internal_plain' ] else 'false' }}
         type: XMPP
         login-url: {{ inventory_hostname }}
       }

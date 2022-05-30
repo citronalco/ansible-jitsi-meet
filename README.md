@@ -15,5 +15,6 @@ Nicht installiert wird die Videoaufnahmekomponente Jibri.
 ### Anpassungen
 Mit `/etc/jitsi/meet/meet.bingo-ev.de/DOMAINNAME/nginx-override.conf` können eigene Logos, Icons und eine eigene interface_config.js zum Anpassen der Jitsi-Meet-Weboberfläche eingebunden werden.
 
-Mit `/etc/jitsi/meet/meet.bingo-ev.de/DOMAINNAME/config.js` können Standardeinstellungen für die Meetings festgelegt werden (z.B. ob am Anfang alle Mikros stumm sind und alle Kameras aus).
+Mit `/etc/jitsi/meet/meet.bingo-ev.de/DOMAINNAME/config.js` können Standardeinstellungen für die Meetings festgelegt werden (z.B. ob am Anfang alle Mikros stumm und alle Kameras aus sind).
 
+Die Anpassungen werden beim erneuten Ausrollen und bei Jitsi-Updates nicht überschrieben.

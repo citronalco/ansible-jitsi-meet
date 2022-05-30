@@ -2,9 +2,10 @@
 
 # Referenz: /usr/share/jitsi-meet-web-config/jitsi-meet.example
 # Mehrer Domains auf einem Server: https://community.jitsi.org/t/multiple-domains-under-1-install/21361/2
+# https://jitsi.github.io/handbook/docs/devops-guide/turn/
+# https://jitsi.github.io/handbook/docs/devops-guide/faq#how-to-migrate-away-from-multiplexing-and-enable-bridge-websockets
 
 {% if item == inventory_hostname %}
-# bernie: auskommentiert, sonst klappt "certbot renew" nicht - oder doch? FIXME!
 server_names_hash_bucket_size 64;
 
 types {

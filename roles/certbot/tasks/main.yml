@@ -6,7 +6,7 @@
   stat:
     path: "/etc/letsencrypt/live/{{ item }}/cert.pem"
   register: letsencrypt_cert
-  loop: "{{ [ inventory_hostname ] + ( jitsi.domain_aliases | default([]) ) + ( turns_hostname | default() | list ) }}"
+  loop: "{{ ( [ inventory_hostname, turns_hostname ] + jitsi.domain_aliases | default([]) ) | select('defined') | list }}"
 
 - name: Stop Nginx to allow certbot to generate a cert
   service:
@@ -18,7 +18,7 @@
   command: >
     certbot certonly --standalone --noninteractive --agree-tos --email {{ admin.email }}
     -d {{ item }}
-  loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] + ( turns_hostname | default() | list ) }}"
+  loop: "{{ ( [ inventory_hostname, turns_hostname ] + jitsi.domain_aliases | default([]) ) | select('defined') | list }}"
   args:
     creates: "/etc/letsencrypt/live/{{ item }}/cert.pem"
   notify:

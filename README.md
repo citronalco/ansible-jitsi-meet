@@ -18,3 +18,5 @@ Mit `/etc/jitsi/meet/meet.bingo-ev.de/DOMAINNAME/nginx-override.conf` können ei
 Mit `/etc/jitsi/meet/meet.bingo-ev.de/DOMAINNAME/config.js` können Standardeinstellungen für die Meetings festgelegt werden (z.B. ob am Anfang alle Mikros stumm und alle Kameras aus sind).
 
 Die Anpassungen werden beim erneuten Ausrollen und bei Jitsi-Updates nicht überschrieben.
+
+__Die Anpassungen für meet.bingo-ev.de liegen hier: https://git.bingo-ev.de/geierb/jitsi-meet-config__

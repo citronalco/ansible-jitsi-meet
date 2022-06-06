@@ -14,14 +14,22 @@
   package:
     name: nagios-plugins-standard
 
-- name: Install vnstat
-  package:
-    name: vnstat
+- name: Create directory for local NRPE plugins
+  file:
+    path: "/usr/local/nrpe-plugins/"
+    state: directory
+    mode: "0755"
 
-- name: Install check_systemd_servide bird_sessions
+- name: Create symlink for utils.sh
+  file:
+    src: "/usr/lib/nagios/plugins/utils.sh"
+    dest: "/usr/local/nrpe-plugins/utils.sh"
+    state: link
+
+- name: Install check_systemd_service NRPE plugin
   copy:
     src: check_systemd_service
-    dest: "/usr/lib/nagios/plugins/check_systemd_service"
+    dest: "/usr/local/nrpe-plugins/check_systemd_service"
     owner: root
     group: root
     mode: "a+x"

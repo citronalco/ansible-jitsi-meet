@@ -33,6 +33,7 @@
     dest: "/etc/nginx/sites-enabled/{{ item }}.conf"
     state: link
   loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
+  when: not ansible_check_mode
   notify: reload nginx
 
 - name: Get all enabled site configs
@@ -49,11 +50,12 @@
   when: item.path | basename not in ( jitsi.domain_aliases | default([]) + [ inventory_hostname ] ) | product(['.conf']) | map('join')
   notify: reload nginx
 
-- name: Create directory for customizations
+- name: Create directories for customizations
   file:
-    path: "/etc/jitsi/meet/{{ item }}"
+    path: "/etc/jitsi/meet/{{ item }}/images"
     state: directory
     mode: "0755"
+    recurse: yes
   loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
 
 - name: Ensure Jitsi-Meet customization file /etc/jitsi/meet/{{ inventory_hostname }}/nginx-override.conf exists
@@ -63,6 +65,18 @@
     mode: "0644"
     force: false
   loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
+  register: nginx_override
+
+- name: Populate customizations directory with Jitsi-Meet default if nginx-override.conf got created
+  file:
+    src: "/usr/share/jitsi-meet/{{ item[1] }}"
+    dest: "/etc/jitsi/meet/{{ item[0].item }}/{{ item[1] }}"
+    state: link
+    force: false
+  with_nested:
+    - "{{ nginx_override.results }}"
+    - [ "images/favicon.ico", "images/apple-touch-icon.png", "images/watermark.svg", "interface_config.js" ]
+  when: item[0].changed
 
 - name: Create minimal default Jitsi Meet configuration if none exists
   template:

@@ -7,7 +7,7 @@ jitsi:
   # Die Servereinstellungen (z.B. Authentifizierung, User) sind für alle Domains gleich, die Jitsi-GUI kann aber für jede Domain
   # einzeln in /etc/jitsi/meet/<domainname>/ angepasst werden.
   domain_aliases:
-    - m2.zettacloud.de
+    - meet.zettacloud.de
 
   # Sollen nur authentifizierte Benutzer Meetings starten können "authenticator" auf "internal_hashed" setzen
   #  und die User auf dem Server anlegen mit "prosodyctl register <username> <servername> <passwort>"

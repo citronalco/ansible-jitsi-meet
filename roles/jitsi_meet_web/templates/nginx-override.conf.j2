@@ -20,6 +20,6 @@ location = /images/watermark.svg {
 }
 
 # Verzeichnis für Branding-Daten
-location ^~ /branding {
-    alias /etc/jitsi/meet/{{ item }}/branding;
+location ~ ^/branding/(.+)$ {
+    alias /etc/jitsi/meet/{{ item }}/branding/$1;
 }

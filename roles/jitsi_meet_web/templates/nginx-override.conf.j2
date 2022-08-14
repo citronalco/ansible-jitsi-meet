@@ -5,7 +5,7 @@ location = /interface_config.js {
     alias /etc/jitsi/meet/{{ item }}/interface_config.js;
 }
 
-# Grafiken
+# bestehende Grafiken
 location = /favicon.ico {
     alias /etc/jitsi/meet/{{ item }}/images/favicon.ico;
 }
@@ -17,4 +17,9 @@ location = /images/apple-touch-icon.png {
 }
 location = /images/watermark.svg {
     alias /etc/jitsi/meet/{{ item }}/images/watermark.svg;
+}
+
+# Verzeichnis für Branding-Daten
+location ^~ /branding {
+    alias /etc/jitsi/meet/{{ item }}/branding;
 }

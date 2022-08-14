@@ -13,9 +13,12 @@ Nicht installiert wird die Videoaufnahmekomponente Jibri.
 3. Ausrollen mit `ansible-playbook -i hosts jitsi-meet.yml`
 
 ### Anpassungen
-Mit `/etc/jitsi/meet/meet.bingo-ev.de/DOMAINNAME/nginx-override.conf` können eigene Logos, Icons und eine eigene interface_config.js zum Anpassen der Jitsi-Meet-Weboberfläche eingebunden werden.
+Mit `/etc/jitsi/meet/DOMAINNAME/nginx-override.conf` können eigene Logos, Icons und eine eigene interface_config.js zum Anpassen der Jitsi-Meet-Weboberfläche eingebunden werden.
 
-Mit `/etc/jitsi/meet/meet.bingo-ev.de/DOMAINNAME/config.js` können Standardeinstellungen für die Meetings festgelegt werden (z.B. ob am Anfang alle Mikros stumm und alle Kameras aus sind).
+Mit `/etc/jitsi/meet/DOMAINNAME/config.js` können Standardeinstellungen für die Meetings festgelegt werden (z.B. ob am Anfang alle Mikros stumm und alle Kameras aus sind).
+
+Dateien für das Branding können im Verzeichnis `/etc/jitsi/meet/DOMAINNAME/branding/` abgelegt werden.
+Das Verzeichnis ist erreichbar über https://DOMAINNAME/branding/
 
 Diese Anpassungen werden beim erneuten Ausrollen und bei Jitsi-Updates nicht überschrieben.
 

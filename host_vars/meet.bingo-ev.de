@@ -18,6 +18,10 @@ jitsi:
   # Sollen auch unauthentifizierte Gäste laufenden Meetings beitreten können? (Default: false)
   guests_allowed: true
 
+  # Falls Jibri-Server Aufnahmen erstellen sollen, hier ihre Hostnamen (FQDN) angeben
+  jibri_server:
+  # - recorder.meet.bingo-ev.de
+
 # Falls der TURNS-Server wegen besserer Firmenfirewall-Durchdringung auf Port 443 laufen soll,
 # muss hier ein zusätzlicher Domainname angegeben werden, dessen A-Record ebenfalls auf den Jitsi-Server zeigt (Default: leer)
 #turns_hostname: turns.bingo-ev.de

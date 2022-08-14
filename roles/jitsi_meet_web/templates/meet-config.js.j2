@@ -43,6 +43,9 @@ var config = {
     // Whether to enable file recording or not.
     fileRecordingsEnabled: false,
 
+    // Whether to enable live streaming or not.
+    liveStreamingEnabled: false,
+
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
@@ -54,10 +57,10 @@ var config = {
     enableWelcomePage: true,
 
     // Default local name to be displayed
-    defaultLocalDisplayName: 'ich',
+    //defaultLocalDisplayName: 'ich',
 
     // Default remote name to be displayed
-    defaultRemoteDisplayName: 'Unbekannt',
+    //defaultRemoteDisplayName: 'Unbekannt',
 
     // If third party requests are disabled, no other server will be contacted.
     // This means avatars will be locally generated and callstats integration
@@ -98,6 +101,8 @@ var config = {
      * Default interval (milliseconds) for triggering mouseMoved iframe API event
      */
     mouseMoveCallbackInterval: 1000,
+
+    // dynamicBrandingUrl: '/branding/branding.json',
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

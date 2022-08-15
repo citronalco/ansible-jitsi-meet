@@ -11,7 +11,7 @@ var config = {
         domain: '{{ inventory_hostname }}',
 
         // When using authentication, domain for guest users.
-{% if jitsi.guest_allowed is defined and jitsi.guests_allowed %}
+{% if jitsi.guests_allowed is defined and jitsi.guests_allowed %}
         anonymousdomain: 'guest.{{ inventory_hostname }}',
 {% else %}
         //anonymousdomain: 'guest.{{ inventory_hostname }}',

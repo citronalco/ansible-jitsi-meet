@@ -50,12 +50,18 @@
   when: item.path | basename not in ( jitsi.domain_aliases | default([]) + [ inventory_hostname ] ) | product(['.conf']) | map('join')
   notify: reload nginx
 
-- name: Create directories for customizations
+- name: Create directories for domains
+  file:
+    path: "/etc/jitsi/meet/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
+
+- name: Create directories for customizations for each domain
   file:
     path: "/etc/jitsi/meet/{{ item }}/images"
     state: directory
     mode: "0755"
-    recurse: yes
   loop: "{{ jitsi.domain_aliases | default([]) + [ inventory_hostname ] }}"
 
 - name: Ensure Jitsi-Meet customization file /etc/jitsi/meet/{{ inventory_hostname }}/nginx-override.conf exists

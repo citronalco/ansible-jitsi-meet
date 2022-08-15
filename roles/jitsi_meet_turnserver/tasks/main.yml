@@ -2,6 +2,13 @@
   apt:
     pkg: [ "jitsi-meet-turnserver" ]
 
+- name: Set static-auth-secret
+  lineinfile:
+    path: "/etc/turnserver.conf"
+    regexp: "^static-auth-secret="
+    line: "static-auth-secret={{ turnpwd }}"
+  notify: restart coturn
+
 - name: Create Certbot hook file
   template:
     src: "coturn-certbot-deploy.sh.j2"

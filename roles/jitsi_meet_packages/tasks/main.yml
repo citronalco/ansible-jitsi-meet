@@ -2,6 +2,7 @@
   apt:
     pkg: [ "gpg", "gpg-agent" ]
     install_recommends: false
+    update_cache: yes
 
 - name: Add apt-key of jisti.org
   apt_key:
@@ -22,4 +23,5 @@
 - name: Install nginx and jisti-meet
   apt:
     pkg: [ "nginx-full", "jitsi-meet" ]
+    state: latest
     install_recommends: false

@@ -40,23 +40,6 @@ var config = {
     // Every participant after the Nth will start video muted.
     // startVideoMuted: 1,
 
-    // Recording
-    recordingService: {
-        // When integrations like dropbox are enabled only that will be shown,
-        // by enabling fileRecordingsServiceEnabled, we show both the integrations
-        // and the generic recording service (its configuration and storage type
-        // depends on jibri configuration)
-        enabled: false,
-
-        // Whether to show the possibility to share file recording with other people
-        // (e.g. meeting participants), based on the actual implementation
-        // on the backend.
-        sharingEnabled: false,
-
-        // Hide the warning that says we only store the recording for 24 hours.
-        hideStorageWarning: false,
-    },
-
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 

@@ -54,3 +54,21 @@
     line: ".level=WARNING"
   notify:
     - restart jitsi-videobridge2
+
+- name: Check if REST API is enabled for statistics
+  lineinfile:
+    state: absent
+    path: /etc/jitsi/videobridge/jvb.conf
+    regexp: "^\\s*apis { rest { enabled = true } }"
+  check_mode: true
+  changed_when: false
+  register: rest_api
+
+- name: Enable REST API
+  lineinfile:
+    path: /etc/jitsi/videobridge/jvb.conf
+    insertafter: "videobridge {"
+    line: "    apis { rest { enabled = true } }"
+  when: not rest_api.found
+  notify:
+    - restart jitsi-videobridge2

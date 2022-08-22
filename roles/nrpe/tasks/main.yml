@@ -28,11 +28,14 @@
 
 - name: Install check_systemd_service NRPE plugin
   copy:
-    src: check_systemd_service
-    dest: "/usr/local/nrpe-plugins/check_systemd_service"
+    src: "{{ item }}"
+    dest: "/usr/local/nrpe-plugins/{{ item }}"
     owner: root
     group: root
     mode: "a+x"
+  loop:
+    - check_systemd_service
+    - check_jitsi_videobridge
 
 - name: enable NRPE-Server
   systemd:

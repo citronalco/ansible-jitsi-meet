@@ -18,6 +18,9 @@ command[check_service_coturn]=/usr/local/nrpe-plugins/check_systemd_service cotu
 # prosodyctl check
 command[check_prosodyctl]=sudo /usr/local/nrpe-plugins/check_prosodyctl
 
+# Jitsi Videobridge2 health check and statistics
+command[check_jvb]=/usr/local/nrpe-plugins/check_jitsi_videobridge -m health --append-metric conferences --append-metric participants --append-metric videochannels --append-metric bit_rate_upload --append-metric bit_rate_download --append-metric total_failed_conferences
+
 # Certificates
 {% for domain in ( [ inventory_hostname ] + ( jitsi.domain_aliases | default([]) ) + ( turns_hostname | default() | list ) ) %}
 command[check_certificate_{{ domain }}]=/usr/lib/nagios/plugins/check_http -C 13,6 --sni --ssl -H {{ domain }}

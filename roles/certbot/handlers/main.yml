@@ -6,7 +6,7 @@
   shell:
     cmd: "/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh"
 
-- name: run nginx cert renewal hook
+- name: run post renewal hook
   command:
-    cmd: /etc/letsencrypt/renewal-hooks/post/nginx.sh
+    cmd: /etc/letsencrypt/renewal-hooks/post/hook.sh
 

@@ -4,9 +4,4 @@
     RENEWED_DOMAINS: "{{ turns_hostname | default(inventory_hostname) }}"
     RENEWED_LINEAGE: "/etc/letsencrypt/live/{{ turns_hostname | default(inventory_hostname) }}"
   shell:
-    cmd: "/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh"
-
-- name: run post renewal hook
-  command:
-    cmd: /etc/letsencrypt/renewal-hooks/post/hook.sh
-
+    cmd: "/etc/letsencrypt/renewal-hooks/deploy/certbot.sh"

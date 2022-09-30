@@ -8,9 +8,3 @@
     regexp: "^static-auth-secret="
     line: "static-auth-secret={{ turnpwd }}"
   notify: restart coturn
-
-- name: Create Certbot hook file
-  template:
-    src: "coturn-certbot-deploy.sh.j2"
-    dest: "/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh"
-    mode: "0750"

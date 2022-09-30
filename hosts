@@ -1,4 +1,0 @@
-# hostname		ipv4=<öffentliche_IPv4-Adresse>		ipv6=<öffentliche_IPv6-Adresse>			ansible_ssh_host="{{ipv4}}" oder die IP-Adresse, unter der Ansible den Host erreicht
-
-[jitsi]
-meet.bingo-ev.de	ipv4=94.142.219.68			ipv6=2a02:868:15:68::1			ansible_ssh_host="{{ ipv4 }}"

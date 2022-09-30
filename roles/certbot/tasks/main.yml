@@ -22,7 +22,7 @@
   args:
     creates: "/etc/letsencrypt/live/{{ item }}/cert.pem"
   notify:
-    - run post renewal hook
+    - run certbot post renewal hook
 
 - name: Start Nginx after cert has been generated
   service:
@@ -32,12 +32,18 @@
 
 - name: Add pre hook to certbot to stop Nginx before certificate renewal
   template:
-    src: "pre-hook.sh.j2"
-    dest: "/etc/letsencrypt/renewal-hooks/pre/hook.sh"
+    src: "pre-hook-nginx.sh.j2"
+    dest: "/etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh"
     mode: 0770
 
-- name: Add post hook to certbot to start Nginx and deploy certs to Coturn after certificate renewal
+- name: Add post hooks to certbot to start Nginx and deploy certs to Coturn after certificate renewal
   template:
-    src: "post-hook.sh.j2"
-    dest: "/etc/letsencrypt/renewal-hooks/post/hook.sh"
+    src: "post-hook-nginx.sh.j2"
+    dest: "/etc/letsencrypt/renewal-hooks/post/start-nginx.sh"
+    mode: 0770
+
+- name: Add deploy hooks to certbot to start Nginx and deploy certs to Coturn after certificate renewal
+  template:
+    src: "deploy-hook-certbot.sh.j2"
+    dest: "/etc/letsencrypt/renewal-hooks/deploy/certbot.sh"
     mode: 0770

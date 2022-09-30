@@ -12,7 +12,9 @@
 
 - name: Install Nagios Plugins
   package:
-    name: nagios-plugins-standard
+    name:
+    - nagios-plugins-standard
+    - nagios-plugins-contrib
 
 - name: Create directory for local NRPE plugins
   file:

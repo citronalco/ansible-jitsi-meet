@@ -1,6 +1,9 @@
 # {{ ansible_managed }}
 
-# Referenz: /usr/share/jitsi-meet-web-config/jitsi-meet.example
+# Referenz:
+# - /usr/share/jitsi-meet-web-config/jitsi-meet.example
+# - https://github.com/jitsi/jitsi-meet/blob/master/doc/debian/jitsi-meet/jitsi-meet.example
+#
 # Mehrer Domains auf einem Server: https://community.jitsi.org/t/multiple-domains-under-1-install/21361/2
 # https://jitsi.github.io/handbook/docs/devops-guide/turn/
 # https://jitsi.github.io/handbook/docs/devops-guide/faq#how-to-migrate-away-from-multiplexing-and-enable-bridge-websockets
@@ -9,8 +12,9 @@
 server_names_hash_bucket_size 64;
 
 types {
-# nginx's default mime.types doesn't include a mapping for wasm
+# nginx's default mime.types doesn't include a mapping for wasm or wav.
     application/wasm     wasm;
+    audio/wav            wav;
 }
 upstream prosody {
     zone upstreams 64K;
@@ -22,7 +26,6 @@ upstream jvb1 {
     server 127.0.0.1:9090;
     keepalive 2;
 }
-
 {%endif %}
 server {
     listen 80;
@@ -61,6 +64,7 @@ server {
     ssl_session_tickets off;
 
     add_header Strict-Transport-Security "max-age=63072000" always;
+    set $prefix "";
 
     ssl_certificate /etc/letsencrypt/live/{{ item }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/{{ item }}/privkey.pem;
@@ -87,6 +91,13 @@ server {
 
     location = /external_api.js {
         alias /usr/share/jitsi-meet/libs/external_api.min.js;
+    }
+
+    location = /_api/room-info {
+        proxy_pass http://prosody/room-info?prefix=$prefix&$args;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $http_host;
     }
 
     # ensure all static content can always be found first
@@ -123,23 +134,19 @@ server {
 {% endif %}
     }
 
-
     # xmpp websockets
     location = /xmpp-websocket {
-        proxy_pass http://127.0.0.1:5280/xmpp-websocket?prefix=$prefix&$args;
+        proxy_pass http://prosody/xmpp-websocket?prefix=$prefix&$args;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
-
 {% if item == inventory_hostname %}
 {# für Unterstützung mehrerer Domains auf einem Server - nur bei der Hauptdomain (die, die in Prosody konfiguriert ist): #}
         proxy_set_header Host $http_host;
-
 {% else %}
 {# Nur alle Nicht-Hauptdomain-Domains: #}
         proxy_set_header Host {{ item }};
 {% endif %}
-
         tcp_nodelay on;
     }
 
@@ -194,6 +201,14 @@ server {
         set $prefix "$1";
 
         rewrite ^/(.*)$ /xmpp-websocket;
+    }
+
+    location ~ ^/([^/?&:'"]+)/_api/room-info {
+        set $subdomain "$1.";
+        set $subdir "$1/";
+        set $prefix "$1";
+
+        rewrite ^/(.*)$ /_api/room-info;
     }
 
     # Anything that didn't match above, and isn't a real file, assume it's a room name and redirect to /

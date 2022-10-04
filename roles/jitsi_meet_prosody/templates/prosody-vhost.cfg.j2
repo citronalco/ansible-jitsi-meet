@@ -1,4 +1,5 @@
 -- {{ ansible_managed }}
+-- reference: https://github.com/jitsi/jitsi-meet/blob/master/doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example
 
 plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 
@@ -8,11 +9,11 @@ muc_mapper_domain_base = "{{ inventory_hostname }}";
 turncredentials_secret = "{{ turnpwd }}";
 turncredentials = {
      { type = "stun", host = "{{ inventory_hostname }}", port = 3478 },
-     { type = "turn", host = "{{ inventory_hostname }}", port = 3478, transport = "udp", ttl = 86400 },
+     { type = "turn", host = "{{ inventory_hostname }}", port = 3478, transport = "udp", secret = true, ttl = 86400, algorithm = "turn" },
 {% if turns_hostname is defined %}
-     { type = "turns", host = "{{ turns_hostname }}", port = 443, transport = "tcp", ttl = 86400 },
+     { type = "turns", host = "{{ turns_hostname }}", port = 443, transport = "tcp", secret = true, ttl = 86400, algorithm = "turn" }
 {% else %}
-     { type = "turns", host = "{{ inventory_hostname }}", port = 5349, transport = "tcp", ttl = 86400 },
+     { type = "turns", host = "{{ inventory_hostname }}", port = 5349, transport = "tcp", secret = true, ttl = 86400, algorithm = "turn" }
 {% endif %}
 };
 
@@ -42,8 +43,7 @@ unlimited_jids = {
 }
 
 VirtualHost "{{ inventory_hostname }}"
-    -- enabled = false -- Remove this line to enable this host
-    authentication = "{{ jitsi.authenticator | default("anonymous") }}"
+    authentication = "{{ jitsi.authenticator | default("jitsi-anonymous") }}" -- do not delete me
     -- Properties below are modified by jitsi-meet-tokens package config
     -- and authentication above is switched to "token"
     --app_id="example_app_id"
@@ -59,6 +59,7 @@ VirtualHost "{{ inventory_hostname }}"
     av_moderation_component = "avmoderation.{{ inventory_hostname }}"
     speakerstats_component = "speakerstats.{{ inventory_hostname }}"
     conference_duration_component = "conferenceduration.{{ inventory_hostname }}"
+    end_conference_component = "endconference.{{ inventory_hostname }}"
     -- we need bosh
     modules_enabled = {
         "bosh";
@@ -68,13 +69,16 @@ VirtualHost "{{ inventory_hostname }}"
         "turncredentials";
         "external_services";
         "conference_duration";
+        "end_conference";
         "muc_lobby_rooms";
         "muc_breakout_rooms";
         "av_moderation";
+        "room_metadata";
     }
     c2s_require_encryption = false
     lobby_muc = "lobby.{{ inventory_hostname }}"
     breakout_rooms_muc = "breakout.{{ inventory_hostname }}"
+    room_metadata_component = "metadata.{{ inventory_hostname }}"
     main_muc = "conference.{{ inventory_hostname }}"
     muc_lobby_whitelist = { "recorder.{{ inventory_hostname }}" } -- Here we can whitelist jibri to enter lobby enabled rooms
 
@@ -106,7 +110,6 @@ Component "breakout.{{ inventory_hostname }}" "muc"
     modules_enabled = {
         "muc_meeting_id";
         "muc_domain_mapper";
-        --"token_verification";
         "muc_rate_limit";
         "polls";
     }
@@ -144,6 +147,9 @@ Component "speakerstats.{{ inventory_hostname }}" "speakerstats_component"
 Component "conferenceduration.{{ inventory_hostname }}" "conference_duration_component"
     muc_component = "conference.{{ inventory_hostname }}"
 
+Component "endconference.{{ inventory_hostname }}" "end_conference"
+    muc_component = "conference.{{ inventory_hostname }}"
+
 Component "avmoderation.{{ inventory_hostname }}" "av_moderation_component"
     muc_component = "conference.{{ inventory_hostname }}"
 
@@ -157,25 +163,10 @@ Component "lobby.{{ inventory_hostname }}" "muc"
         "polls";
     }
 
--- Enabled dial-in for JaaS customers
--- Note: make sure you have the following packages installed: lua-basexx, liblua5.3-dev, libssl-dev, luarocks
--- and execute $ sudo luarocks install luajwtjitsi 3.0-0
-VirtualHost "jigasi.meet.jitsi"
-    enabled = false -- JaaS customers remove this line
-    modules_enabled = {
-      "ping";
-      "bosh";
-    }
-    authentication = "token"
-    app_id = "jitsi";
-    asap_key_server = "https://jaas-public-keys.jitsi.net/jitsi-components/prod-8x8"
-    asap_accepted_issuers = { "jaas-components" }
-    asap_accepted_audiences = { "jigasi.{{ inventory_hostname }}" }
+Component "metadata.{{ inventory_hostname }}" "room_metadata_component"
+    muc_component = "conference.{{ inventory_hostname }}"
+    breakout_rooms_component = "breakout.{{ inventory_hostname }}"
 
--- Enable recordings with Jibri
--- Note: To connect with Jibri you have to create two Prosody users and add them with their passwords to the Jibri configuration:
---   * recorder@recorder.{{ inventory_hostname }}
---   * jibri@auth.meet.{{ inventory_hostname }}
 VirtualHost "recorder.{{ inventory_hostname }}"
     -- enabled = false
     modules_enabled = {

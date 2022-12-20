@@ -27,7 +27,7 @@
     path: "/etc/jitsi/jicofo/jicofo.conf"
     regexp: '^(\s*)client-proxy: '
     backrefs: yes
-    line: '\1client-proxy: focus.{{ inventory_hostname }}'
+    line: '\1client-proxy: "focus.{{ inventory_hostname }}"'
   notify:
     - restart jicofo
 

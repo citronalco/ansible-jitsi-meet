@@ -1,6 +1,9 @@
-/* eslint-disable no-unused-vars, no-var */
+/* eslint-disable comma-dangle, no-unused-vars, no-var, prefer-template, vars-on-top */
 
 // See /usr/share/jitsi-meet-web-config/config.js for all options
+// and https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-configuration for documentation
+
+var enableJaaS = false;
 
 var config = {
     // Connection
@@ -24,6 +27,8 @@ var config = {
     flags: {
         // Workaround for https://community.jitsi.org/t/problems-for-the-new-version-of-jitsi-meet-for-ios/117170/38
         // see https://github.com/jitsi/jitsi-meet/commit/5c2ec5df5448180bc3da8e14eb771d207450472d
+        // having set "sendMultipleVideoStreams" to false also works, and seems be result in better video quality
+        // (see https://community.jitsi.org/t/terrible-video-quality-320p-after-update/120049/5)
         sourceNameSignaling: true,
         sendMultipleVideoStreams: false,
         receiveMultipleVideoStreams: true,
@@ -31,6 +36,9 @@ var config = {
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
     bosh: '//{{ inventory_hostname }}/http-bind',
+
+    // Websocket URL
+    // websocket: 'wss://{{ inventory_hostname }}/xmpp-websocket',
 
     // Enabling this will run the lib-jitsi-meet no audio detection module which
     // will notify the user if the current selected microphone has no audio

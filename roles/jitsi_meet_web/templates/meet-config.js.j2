@@ -23,19 +23,8 @@ var config = {
         muc: 'conference.{{ inventory_hostname }}'
     },
 
-    // Feature Flags.
-    flags: {
-        // Workaround for https://community.jitsi.org/t/problems-for-the-new-version-of-jitsi-meet-for-ios/117170/38
-        // see https://github.com/jitsi/jitsi-meet/commit/5c2ec5df5448180bc3da8e14eb771d207450472d
-        // having set "sendMultipleVideoStreams" to false also works, and seems be result in better video quality
-        // (see https://community.jitsi.org/t/terrible-video-quality-320p-after-update/120049/5)
-        sourceNameSignaling: true,
-        sendMultipleVideoStreams: false,
-        receiveMultipleVideoStreams: true,
-    },
-
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//{{ inventory_hostname }}/http-bind',
+    bosh: 'https://{{ inventory_hostname }}/http-bind',
 
     // Websocket URL
     // websocket: 'wss://{{ inventory_hostname }}/xmpp-websocket',
@@ -121,3 +110,10 @@ var config = {
 
     // no configuration value should follow this line.
 };
+
+// Temporary backwards compatibility with old mobile clients.
+config.flags = config.flags || {};
+config.flags.sourceNameSignaling = true;
+config.flags.sendMultipleVideoStreams = true;
+config.flags.receiveMultipleVideoStreams = true;
+

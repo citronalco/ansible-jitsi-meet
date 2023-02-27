@@ -13,12 +13,40 @@
     repo: "deb https://download.jitsi.org stable/"
     filename: jitsi
 
-- name: Preconfigure hostname used by postinst scripts of jitsi packages
+- name: Preconfigure hostname used by postinst scripts of jitsi-meet-prosody package
+  debconf:
+    name: jitsi-meet-prosody
+    question: jitsi-meet-prosody/jvb-hostname
+    vtype: string
+    value: "{{ inventory_hostname }}"
+
+- name: Preconfigure hostname used by postinst scripts of jitsi-videobridge package
   debconf:
     name: jitsi-videobridge
     question: jitsi-videobridge/jvb-hostname
     vtype: string
     value: "{{ inventory_hostname }}"
+
+- name: Preconfigure password used by postinst scripts of jitsi-videobridge package
+  debconf:
+    name: jitsi-videobridge
+    question: jitsi-videobridge/jvbsecret
+    vtype: password
+    value: "{{ jvbpwd }}"
+
+- name: Preconfigure coturn password used by postinst scripts of jitsi-meet-prosody package
+  debconf:
+    name: jitsi-meet-prosody
+    question: jitsi-meet-prosody/turn-secret
+    vtype: password
+    value: "{{ turnpwd }}"
+
+- name: Tell installer to create a self signed certificate
+  debconf:
+    name: jitsi-meet
+    question: jitsi-meet/cert-choice
+    vtype: string
+    value: "Generate a new self-signed certificate"
 
 - name: Install nginx and jisti-meet
   apt:

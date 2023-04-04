@@ -18,6 +18,12 @@
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
     mode: "0644"
 
+- name: Do not cache packages installed with apt-get
+  template:
+    src: 01keep-debs.j2
+    dest: /etc/apt/apt.conf.d/01keep-debs
+    mode: "0644"
+
 - name: Let restart server once a week if required
   cron:
     name: weekly restart

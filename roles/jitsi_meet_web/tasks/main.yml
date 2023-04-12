@@ -86,7 +86,7 @@
 
 - name: Create minimal default Jitsi Meet configuration if none exists
   template:
-    src: meet-config.js.j2
+    src: config.js.j2
     dest: "/etc/jitsi/meet/{{ item }}/config.js"
     mode: "0644"
     force: false

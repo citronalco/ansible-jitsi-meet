@@ -94,13 +94,18 @@ Component "conference.{{ inventory_hostname }}" "muc"
     restrict_room_creation = true
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
         "polls";
         --"token_verification";
         "muc_rate_limit";
+        "muc_password_whitelist";
     }
     admins = { "focus@auth.{{ inventory_hostname }}" }
+    muc_password_whitelist = {
+        "focus@auth.{{ inventory_hostname }}"
+    }
     muc_room_locking = false
     muc_room_default_public_jids = true
 
@@ -108,6 +113,7 @@ Component "breakout.{{ inventory_hostname }}" "muc"
     restrict_room_creation = true
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
         "muc_rate_limit";
@@ -121,6 +127,7 @@ Component "breakout.{{ inventory_hostname }}" "muc"
 Component "internal.auth.{{ inventory_hostname }}" "muc"
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "ping";
     }
     admins = { "focus@auth.{{ inventory_hostname }}", "jvb@auth.{{ inventory_hostname }}" }
@@ -159,6 +166,7 @@ Component "lobby.{{ inventory_hostname }}" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
     modules_enabled = {
+        "muc_hide_all";
         "muc_rate_limit";
         "polls";
     }

@@ -22,7 +22,7 @@
   args:
     creates: "/etc/letsencrypt/live/{{ item }}/cert.pem"
   notify:
-    - run certbot post renewal hook
+    - run coturn cert renewal hook
 
 - name: Start Nginx after cert has been generated
   service:
@@ -47,3 +47,4 @@
     src: "deploy-hook-certbot.sh.j2"
     dest: "/etc/letsencrypt/renewal-hooks/deploy/certbot.sh"
     mode: 0770
+

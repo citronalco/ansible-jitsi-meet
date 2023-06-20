@@ -11,8 +11,8 @@ jitsi:
 
   # Sollen nur authentifizierte Benutzer Meetings starten können "authenticator" auf "internal_hashed" setzen
   #  und die User auf dem Server anlegen mit "prosodyctl register <username> <servername> <passwort>"
-  # (Default: "anonymous", d.h. jeder kann Meetings starten.)
-  authenticator: anonymous
+  # (Default: "jitsi-anonymous", d.h. jeder kann Meetings starten.)
+  authenticator: jitsi-anonymous
 
   # Nur wirksam wenn "authenticator" auf "internal_hashed" steht:
   # Sollen auch unauthentifizierte Gäste laufenden Meetings beitreten können? (Default: false)

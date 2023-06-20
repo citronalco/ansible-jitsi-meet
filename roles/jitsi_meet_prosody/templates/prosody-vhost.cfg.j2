@@ -6,8 +6,8 @@ plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 -- domain mapper options, must at least have domain base set to use the mapper
 muc_mapper_domain_base = "{{ inventory_hostname }}";
 
-turncredentials_secret = "{{ turnpwd }}";
-turncredentials = {
+external_service_secret = "{{ turnpwd }}";
+external_services = {
      { type = "stun", host = "{{ inventory_hostname }}", port = 3478 },
      { type = "turn", host = "{{ inventory_hostname }}", port = 3478, transport = "udp", secret = true, ttl = 86400, algorithm = "turn" },
 {% if turns_hostname is defined %}
@@ -66,7 +66,6 @@ VirtualHost "{{ inventory_hostname }}"
         "pubsub";
         "ping"; -- Enable mod_ping
         "speakerstats";
-        "turncredentials";
         "external_services";
         "conference_duration";
         "end_conference";

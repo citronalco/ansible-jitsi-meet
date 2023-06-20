@@ -36,7 +36,7 @@
     path: "/etc/jitsi/jicofo/jicofo.conf"
     regexp: '^(\s*)trusted-domains: '
     backrefs: yes
-    line: '\1trusted-domains: [ {{ jitsi.jibri_server | default([]) | map("to_json") | join(", ") }} ]'
+    line: '\1trusted-domains: [ {{ jitsi.jibri_server | default([ "recorder." + inventory_hostname ]) | map("to_json") | join(", ") }} ]'
   notify:
     - restart jicofo
 

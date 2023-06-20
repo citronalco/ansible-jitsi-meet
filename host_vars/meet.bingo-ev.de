@@ -19,7 +19,7 @@ jitsi:
   guests_allowed: true
 
   # Falls Jibri-Server Aufnahmen erstellen sollen, hier ihre Hostnamen (FQDN) angeben
-  jibri_server:
+  #jibri_server:
   # - recorder.meet.bingo-ev.de
 
 # Falls der TURNS-Server wegen besserer Firmenfirewall-Durchdringung auf Port 443 laufen soll,

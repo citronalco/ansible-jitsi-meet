@@ -31,6 +31,15 @@
   notify:
     - restart jicofo
 
+- name: Set focus XMPP password in jicofo.conf
+  lineinfile:
+    path: "/etc/jitsi/jicofo/jicofo.conf"
+    regexp: '^(\s*)password: '
+    backrefs: yes
+    line: '\1password: "{{ jicofopwd }}"'
+  notify:
+    - restart jicofo
+
 - name: Set Trusted-Domains in jicofo.conf
   lineinfile:
     path: "/etc/jitsi/jicofo/jicofo.conf"

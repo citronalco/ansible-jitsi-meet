@@ -13,3 +13,4 @@
     - jitsi_meet_systemd
     - nrpe
     - unattended_upgrades
+    - journald

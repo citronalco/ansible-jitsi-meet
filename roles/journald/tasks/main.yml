@@ -1,0 +1,12 @@
+- name: Create directory for local journald overrides
+  file:
+    path: "/etc/systemd/journald.conf.d"
+    state: directory
+    mode: "0755"
+
+- name: Limit journald logging to 14 days
+  copy:
+    src: "journald-override.conf"
+    dest: "/etc/systemd/journald.conf.d/local.conf"
+    mode: "0644"
+  notify: restart journald

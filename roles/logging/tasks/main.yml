@@ -10,3 +10,10 @@
     dest: "/etc/systemd/journald.conf.d/local.conf"
     mode: "0644"
   notify: restart journald
+
+- name: Limit rsyslog logging to 14 days
+  lineinfile:
+    path: /etc/logrotate.d/rsyslog
+    regexp: '^(\s)rotate 4$'
+    line: '\1rotate 2'
+    backrefs: true

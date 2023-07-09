@@ -1,6 +1,6 @@
 - name: Install Prosody
   apt:
-    pkg: [ "prosody", "lua-event" ]
+    pkg: [ "prosody", "lua-event", "lua-unbound" ]
 
 - name: Create Prosody vHost configuration
   template:

@@ -48,8 +48,8 @@
     vtype: string
     value: "Generate a new self-signed certificate"
 
-- name: Install nginx and jisti-meet
+- name: Install nginx, openjdk and jisti-meet
   apt:
-    pkg: [ "nginx-full", "jitsi-meet" ]
+    pkg: [ "nginx-full", "openjdk-17-jre-headless", "jitsi-meet" ]
     state: latest
     install_recommends: false

@@ -1,34 +1,16 @@
-# see https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-quickstart/#generate-a-lets-encrypt-certificate-optional-recommended
-- name: Increase TaskMax
-  lineinfile:
-    path: /etc/systemd/system.conf
-    regexp: DefaultTasksMax=
-    line: DefaultTasksMax=65000
+- name: Create directory for system overrides
+  file:
+    path: "/etc/systemd/system.conf.d/"
+    state: directory
+    mode: "0755"
+
+- name: Set system limits
+  copy:
+    src: "system.conf"
+    dest: "/etc/systemd/system.conf.d/jitsi-meet.conf"
+    mode: "0644"
   notify:
     - reread systemd configs
-
-- name: Increase NOFILE
-  lineinfile:
-    path: /etc/systemd/system.conf
-    regexp: DefaultLimitNOFILE=
-    line: DefaultLimitNOFILE=65000
-  notify:
-    - reread systemd configs
-
-- name: Increase NPROC
-  lineinfile:
-    path: /etc/systemd/system.conf
-    regexp: DefaultLimitNPROC=
-    line: DefaultLimitNPROC=65000
-  notify:
-    - reread systemd configs
-
-- name: Limit journald logging to 14 days
-  lineinfile:
-    dest: /etc/systemd/journald.conf
-    regexp: "^[#]?MaxRetentionSec"
-    line: "MaxRetentionSec=14day"
-  notify: restart journald
 
 - name: Create directories for systemd overrides
   file:

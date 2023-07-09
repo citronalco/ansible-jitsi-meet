@@ -1,3 +1,7 @@
+- name: reread systemd configs
+  systemd:
+    daemon_reload: yes
+
 - name: restart coturn
   service:
     name: coturn.service

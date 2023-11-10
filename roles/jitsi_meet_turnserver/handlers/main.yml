@@ -1,8 +1,8 @@
-- name: reread systemd configs
-  systemd:
-    daemon_reload: yes
+- name: Reread systemd configs
+  ansible.builtin.systemd:
+    daemon_reload: true
 
-- name: restart coturn
-  service:
+- name: Restart coturn
+  ansible.builtin.service:
     name: coturn.service
     state: restarted

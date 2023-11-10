@@ -1,50 +1,49 @@
 - name: Install Certbot
-  apt:
-    pkg: [ 'certbot', 'python3-certbot-nginx' ]
+  ansible.builtin.apt:
+    pkg: ['certbot', 'python3-certbot-nginx']
 
 - name: Check if certificate already exists
-  stat:
+  ansible.builtin.stat:
     path: "/etc/letsencrypt/live/{{ item }}/cert.pem"
   register: letsencrypt_cert
-  loop: "{{ ( [ inventory_hostname, turns_hostname ] + jitsi.domain_aliases | default([]) ) | select('defined') | list }}"
+  loop: "{{ ([inventory_hostname, turns_hostname] + jitsi.domain_aliases | default([])) | select('defined') | list }}"
 
 - name: Stop Nginx to allow certbot to generate a cert
-  service:
+  ansible.builtin.service:
     name: "nginx"
     state: stopped
   when: letsencrypt_cert.results | selectattr('stat.exists','equalto', false) | list | count > 0
 
 - name: Generate new certificate
-  command: >
+  ansible.builtin.command: >
     certbot certonly --standalone --noninteractive --agree-tos --email {{ admin.email }}
     -d {{ item }}
-  loop: "{{ ( [ inventory_hostname, turns_hostname ] + jitsi.domain_aliases | default([]) ) | select('defined') | list }}"
+  loop: "{{ ([inventory_hostname, turns_hostname] + jitsi.domain_aliases | default([])) | select('defined') | list }}"
   args:
     creates: "/etc/letsencrypt/live/{{ item }}/cert.pem"
   notify:
-    - run coturn cert renewal hook
+    - Run coturn cert renewal hook
 
 - name: Start Nginx after cert has been generated
-  service:
+  ansible.builtin.service:
     name: "nginx"
     state: started
   when: letsencrypt_cert.results | selectattr('stat.exists','equalto', false) | list | count > 0
 
 - name: Add pre hook to certbot to stop Nginx before certificate renewal
-  template:
+  ansible.builtin.template:
     src: "pre-hook-nginx.sh.j2"
     dest: "/etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh"
-    mode: 0770
+    mode: "0770"
 
 - name: Add post hooks to certbot to start Nginx and deploy certs to Coturn after certificate renewal
-  template:
+  ansible.builtin.template:
     src: "post-hook-nginx.sh.j2"
     dest: "/etc/letsencrypt/renewal-hooks/post/start-nginx.sh"
-    mode: 0770
+    mode: "0770"
 
 - name: Add deploy hooks to certbot to start Nginx and deploy certs to Coturn after certificate renewal
-  template:
+  ansible.builtin.template:
     src: "deploy-hook-certbot.sh.j2"
     dest: "/etc/letsencrypt/renewal-hooks/deploy/certbot.sh"
-    mode: 0770
-
+    mode: "0770"

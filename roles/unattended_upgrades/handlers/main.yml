@@ -1,2 +1,2 @@
-- name: run apt.systemd.daily
-  command: "/usr/lib/apt/apt.systemd.daily"
+- name: Run apt.systemd.daily
+  ansible.builtin.command: "/usr/lib/apt/apt.systemd.daily"

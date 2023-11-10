@@ -1,62 +1,62 @@
-- name: set MUC domain in sip-communicator.properties
-  lineinfile:
+- name: Set MUC domain in sip-communicator.properties
+  ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/sip-communicator.properties
     regexp: '^org.jitsi.videobridge.xmpp.user.shard.MUC_JIDS='
     line: "org.jitsi.videobridge.xmpp.user.shard.MUC_JIDS=JvbBrewery@internal.auth.{{ inventory_hostname }}"
   notify:
-    - restart jitsi-videobridge2
+    - Restart jitsi-videobridge2
 
-- name: set Trusted-Domains in sip-communicator.properties
-  lineinfile:
+- name: Set Trusted-Domains in sip-communicator.properties
+  ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/sip-communicator.properties
     regexp: '^org.jitsi.videobridge.xmpp.user.shard.DOMAIN='
     line: "org.jitsi.videobridge.xmpp.user.shard.DOMAIN=auth.{{ inventory_hostname }}"
   notify:
-    - restart jitsi-videobridge2
+    - Restart jitsi-videobridge2
 
-- name: set Videobrige password in sip-communicator.properties
-  lineinfile:
+- name: Set Videobrige password in sip-communicator.properties
+  ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/sip-communicator.properties
     regexp: '^org.jitsi.videobridge.xmpp.user.shard.PASSWORD='
     line: "org.jitsi.videobridge.xmpp.user.shard.PASSWORD={{ jvbpwd }}"
   notify:
-    - restart jitsi-videobridge2
+    - Restart jitsi-videobridge2
 
 - name: Set Videobridge password in Videobridge config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/config
     regexp: '^JVB_SECRET='
     line: "JVB_SECRET={{ jvbpwd }}"
   notify:
-    - restart jitsi-videobridge2
+    - Restart jitsi-videobridge2
 
 - name: Set Hostname in Videobridge config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/config
     regexp: '^JVB_HOSTNAME='
     line: "JVB_HOSTNAME={{ inventory_hostname }}"
   notify:
-    - restart jitsi-videobridge2
+    - Restart jitsi-videobridge2
 
 - name: Set Hostname for Videobridge websocket in jvb.conf
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/jvb.conf
     regexp: '^(\s*)domain =.*:443'
-    backrefs: yes
+    backrefs: true
     line: '\1domain = "{{ inventory_hostname }}:443"'
   notify:
-    - restart jitsi-videobridge2
+    - Restart jitsi-videobridge2
 
 - name: Decrease Videobridge loglevel
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/logging.properties
     regexp: '^\.level='
     line: ".level=WARNING"
   notify:
-    - restart jitsi-videobridge2
+    - Restart jitsi-videobridge2
 
 - name: Check if REST API is enabled for statistics
-  lineinfile:
+  ansible.builtin.lineinfile:
     state: absent
     path: /etc/jitsi/videobridge/jvb.conf
     regexp: "^\\s*apis { rest { enabled = true } }"
@@ -65,10 +65,10 @@
   register: rest_api
 
 - name: Enable REST API
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/jvb.conf
     insertafter: "videobridge {"
     line: "    apis { rest { enabled = true } }"
   when: not rest_api.found
   notify:
-    - restart jitsi-videobridge2
+    - Restart jitsi-videobridge2

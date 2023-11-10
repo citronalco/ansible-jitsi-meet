@@ -1,103 +1,103 @@
 - name: Set Hostname in Jicofo config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/config"
     regexp: '^JICOFO_HOSTNAME='
     line: "JICOFO_HOSTNAME={{ inventory_hostname }}"
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Set Auth Domain in Jicofo config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/config"
     regexp: '^JICOFO_AUTH_DOMAIN='
     line: "JICOFO_AUTH_DOMAIN=auth.{{ inventory_hostname }}"
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Set Auth Password in Jicofo config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/config"
     regexp: '^JICOFO_AUTH_PASSWORD='
     line: "JICOFO_AUTH_PASSWORD={{ jicofopwd }}"
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Set Hostname in jicofo.conf
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/jicofo.conf"
     regexp: '^(\s*)client-proxy: '
-    backrefs: yes
+    backrefs: true
     line: '\1client-proxy: "focus.{{ inventory_hostname }}"'
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Set focus XMPP password in jicofo.conf
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/jicofo.conf"
     regexp: '^(\s*)password: '
-    backrefs: yes
+    backrefs: true
     line: '\1password: "{{ jicofopwd }}"'
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Set Trusted-Domains in jicofo.conf
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/jicofo.conf"
     regexp: '^(\s*)trusted-domains: '
-    backrefs: yes
-    line: '\1trusted-domains: [ {{ jitsi.jibri_server | default([ "recorder." + inventory_hostname ]) | map("to_json") | join(", ") }} ]'
+    backrefs: true
+    line: '\1trusted-domains: [ {{ jitsi.jibri_server | default(["recorder." + inventory_hostname]) | map("to_json") | join(", ") }} ]'
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Set Brewery-Jid in jicofo.conf
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/jicofo.conf"
     regexp: '^(\s*)brewery-jid: '
-    backrefs: yes
+    backrefs: true
     line: '\1brewery-jid: "JvbBrewery@internal.auth.{{ inventory_hostname }}"'
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Enable/disable authentication in jicofo.conf
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: "/etc/jitsi/jicofo/jicofo.conf"
     block: |
       authentication: {
-        enabled: {{ 'true' if jitsi.authenticator | default('anonymous') in [ 'internal_hashed', 'internal_plain' ] else 'false' }}
+        enabled: {{ 'true' if jitsi.authenticator | default('anonymous') in ['internal_hashed', 'internal_plain'] else 'false' }}
         type: XMPP
         login-url: {{ inventory_hostname }}
       }
     insertafter: 'jicofo {'
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Enable authentication for recording in sip-communicator.properties
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/sip-communicator.properties"
     regexp: '^org.jitsi.jicofo.jibri.BREWERY='
     line: "org.jitsi.jicofo.jibri.BREWERY=JibriBrewery@internal.auth.{{ inventory_hostname }}"
-    create: yes
+    create: true
     mode: "0640"
     owner: "jicofo"
     group: "jitsi"
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Set timeout for recording in sip-communicator.properties
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/sip-communicator.properties"
     regexp: '^org.jitsi.jicofo.jibri.PENDING_TIMEOUT='
     line: "org.jitsi.jicofo.jibri.PENDING_TIMEOUT=90"
-    create: yes
+    create: true
     mode: "0640"
     owner: "jicofo"
     group: "jitsi"
   notify:
-    - restart jicofo
+    - Restart jicofo
 
 - name: Decrease Jicofo loglevel
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/logging.properties"
     regexp: '^\.level='
     line: ".level=WARNING"
-  notify: restart jicofo
+  notify: Restart jicofo

@@ -1,46 +1,46 @@
 - name: Install Prosody
-  apt:
-    pkg: [ "prosody", "lua-event", "lua-unbound" ]
+  ansible.builtin.apt:
+    pkg: ["prosody", "lua-event", "lua-unbound"]
 
 - name: Create Prosody vHost configuration
-  template:
+  ansible.builtin.template:
     src: "prosody-vhost.cfg.j2"
     dest: "/etc/prosody/conf.avail/{{ inventory_hostname }}.cfg.lua"
     mode: "0644"
-  notify: restart prosody
+  notify: Restart prosody
 
 - name: Enable Prosody vHost configuration
-  file:
+  ansible.builtin.file:
     src: "/etc/prosody/conf.avail/{{ inventory_hostname }}.cfg.lua"
     dest: "/etc/prosody/conf.d/{{ inventory_hostname }}.cfg.lua"
     state: link
-  notify: restart prosody
+  notify: Restart prosody
 
 - name: Get all enabled Prosody vHost configurations
-  find:
+  ansible.builtin.find:
     paths: '/etc/prosody/conf.d/'
     file_type: link
   register: find_enabledsites
 
 - name: Disable all unneeded Prosody vHost configurations
-  file:
+  ansible.builtin.file:
     path: "/etc/prosody/conf.d/{{ item.path | basename }}"
     state: absent
   loop: "{{ find_enabledsites.files }}"
   when: item.path | basename not in ("localhost", inventory_hostname + ".cfg.lua")
-  notify: restart prosody
+  notify: Restart prosody
 
 - name: Create self-signed internal Prosody certificates
-  shell:
+  ansible.builtin.shell:
     cmd: "/usr/bin/echo | /usr/bin/prosodyctl cert generate {{ item }}"
     creates: "/var/lib/prosody/{{ item }}.crt"
   loop:
     - "{{ inventory_hostname }}"
     - "auth.{{ inventory_hostname }}"
-  notify: restart prosody
+  notify: Restart prosody
 
 - name: Symlinks certificates into Prosody
-  file:
+  ansible.builtin.file:
     src: "/var/lib/prosody/{{ item }}"
     dest: "/etc/prosody/certs/{{ item }}"
     state: link
@@ -49,41 +49,41 @@
     - "{{ inventory_hostname }}.key"
     - "auth.{{ inventory_hostname }}.crt"
     - "auth.{{ inventory_hostname }}.key"
-  notify: restart prosody
+  notify: Restart prosody
 
 - name: Symlinks certificates into /usr/local/share/ca-certificates/, required for Java (Videobridge)
-  file:
+  ansible.builtin.file:
     src: "/var/lib/prosody/{{ item }}"
     dest: "/usr/local/share/ca-certificates/{{ item }}"
     state: link
   loop:
     - "auth.{{ inventory_hostname }}.crt"
   notify:
-    - update-ca-certificates
-    - restart jitsi videobridge2
+    - Update-ca-certificates
+    - Restart jitsi videobridge2
 
 ### Ensure Prosody users exist and have correct passwords
 # Prosody does not need to run for this
-- name: register Jicofo user (focus)
-  shell:
+- name: Register Jicofo user (focus)
+  ansible.builtin.shell:
     cmd: "prosodyctl register focus auth.{{ inventory_hostname }} {{ jicofopwd }}"
 
 - name: Make sure the focus@auth users roster includes the proxy component
-  shell:
+  ansible.builtin.shell:
     cmd: "prosodyctl mod_roster_command subscribe focus.{{ inventory_hostname }} focus@auth.{{ inventory_hostname }}"
 
-- name: register Videobridge users (jvb)
-  shell:
+- name: Register Videobridge users (jvb)
+  ansible.builtin.shell:
     cmd: "prosodyctl register jvb auth.{{ inventory_hostname }} {{ jvbpwd }}"
 
 # Password für jibri@auth.meet.mydomain für Aufnahmen mit Jibri
-#- name: register Jibri users in auth domain
+#- name: Register Jibri users in auth domain
 #  shell:
 #    cmd: "prosodyctl register jibri auth.{{ inventory_hostname }} {{ jitsi.jibri_password }}"
 #  when: jitsi.jibri_password is defined
 
 # Password für recorder@recording.mydomain für Aufnahmen mit Jibri
-#- name: register Jibri users in recorder domain
+#- name: Register Jibri users in recorder domain
 #  shell:
 #    cmd: "prosodyctl register recorder recorder.{{ inventory_hostname }} {{ jitsi.recorder_password }}"
 #  when: jitsi.recorder_password is defined

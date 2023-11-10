@@ -1,40 +1,39 @@
 - name: Install Jitsi-Meet-Turnserver
-  apt:
-    pkg: [ "jitsi-meet-turnserver" ]
+  ansible.builtin.apt:
+    pkg: ["jitsi-meet-turnserver"]
 
 - name: Create directory for systemd service override
-  file:
+  ansible.builtin.file:
     path: "/etc/systemd/system/coturn.service.d"
     state: directory
     mode: "0755"
 
 - name: Install systemd service override to prevent Coturn from crashing and finding no listener address
-  copy:
+  ansible.builtin.copy:
     src: "override.service"
     dest: "/etc/systemd/system/coturn.service.d/ansible.conf"
     mode: "0644"
   notify:
-    - reread systemd configs
-    - restart coturn
+    - Reread systemd configs
+    - Restart coturn
 
 - name: Set location of TLS cert
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/turnserver.conf"
     regexp: "^cert="
     line: "cert=/etc/coturn/certs/{{ turns_hostname | default(inventory_hostname) }}.fullchain.pem"
-  notify: restart coturn
+  notify: Restart coturn
 
 - name: Set location of TLS key
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/turnserver.conf"
     regexp: "^pkey="
     line: "pkey=/etc/coturn/certs/{{ turns_hostname | default(inventory_hostname) }}.privkey.pem"
-  notify: restart coturn
+  notify: Restart coturn
 
 - name: Set static-auth-secret
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/turnserver.conf"
     regexp: "^static-auth-secret="
     line: "static-auth-secret={{ turnpwd }}"
-  notify: restart coturn
-
+  notify: Restart coturn

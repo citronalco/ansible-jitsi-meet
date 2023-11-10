@@ -1,38 +1,39 @@
 - name: Create directory for system overrides
-  file:
+  ansible.builtin.file:
     path: "/etc/systemd/system.conf.d/"
     state: directory
     mode: "0755"
 
 - name: Set system limits
-  copy:
+  ansible.builtin.copy:
     src: "system.conf"
     dest: "/etc/systemd/system.conf.d/jitsi-meet.conf"
     mode: "0644"
   notify:
-    - reread systemd configs
+    - Reread systemd configs
 
 - name: Create directories for systemd overrides
-  file:
+  ansible.builtin.file:
     path: "/etc/systemd/system/{{ item }}.service.d"
     state: directory
     mode: "0755"
   loop:
-   - nginx
-   - prosody
-   - jicofo
-   - jitsi-videobridge2
-   - nagios-nrpe-server
+    - nginx
+    - prosody
+    - jicofo
+    - jitsi-videobridge2
+    - nagios-nrpe-server
 
 - name: Create systemd overrides to restart services automatically on failure
-  copy:
+  ansible.builtin.copy:
     src: restart-on-failure.service
     dest: /etc/systemd/system/{{ item }}.service.d/restart-on-failure.conf
+    mode: "0644"
   loop:
-   - nginx
-   - prosody
-   - jicofo
-   - jitsi-videobridge2
-   - nagios-nrpe-server
+    - nginx
+    - prosody
+    - jicofo
+    - jitsi-videobridge2
+    - nagios-nrpe-server
   notify:
-    - reread systemd configs
+    - Reread systemd configs

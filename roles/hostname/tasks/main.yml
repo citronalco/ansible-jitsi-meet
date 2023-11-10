@@ -1,18 +1,18 @@
 - name: Set hostname
-  hostname:
+  ansible.builtin.hostname:
     name: "{{ inventory_hostname_short }}"
 
 - name: Set hostname in /etc/hostname
-  copy:
+  ansible.builtin.copy:
     content: "{{ inventory_hostname_short }}{{ '\n' }}"
     dest: /etc/hostname
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Add IPv4 to /etc/hosts
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/hosts
     regexp: "{{ inventory_hostname }}"
-    line: "{{ ipv4 }} {{'\t'}}{{ ( [ inventory_hostname ] + ( jitsi.domain_aliases | default([]) )) | join(' ') }} {{'\t'}} {{ inventory_hostname_short }}"
+    line: "{{ ipv4 }} {{ '\t' }}{{ ([inventory_hostname] + (jitsi.domain_aliases | default([]))) | join(' ') }} {{ '\t' }} {{ inventory_hostname_short }}"
     state: present

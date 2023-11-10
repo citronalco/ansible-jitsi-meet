@@ -1,13 +1,13 @@
-- name: update-ca-certificates
-  command:
+- name: Update-ca-certificates
+  ansible.builtin.command:
     cmd: update-ca-certificates -f
 
-- name: restart prosody
-  service:
+- name: Restart prosody
+  ansible.builtin.service:
     name: prosody.service
     state: restarted
 
-- name: restart jitsi-videobridge2
-  service:
+- name: Restart jitsi-videobridge2
+  ansible.builtin.service:
     name: jitsi-videobridge2.service
     state: restarted

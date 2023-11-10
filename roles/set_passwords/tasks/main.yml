@@ -1,6 +1,6 @@
 # Coturn
 - name: Try to retrieve current shared TURN password
-  shell: /usr/bin/grep -s ^static-auth-secret "/etc/turnserver.conf" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
+  ansible.builtin.shell: /usr/bin/grep -s ^static-auth-secret "/etc/turnserver.conf" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
   register: turnpwd_current
   check_mode: false
   changed_when: false
@@ -8,12 +8,12 @@
     - skip_ansible_lint
 
 - name: Either use TURN password from host_vars, the current one or a new random one
-  set_fact:
+  ansible.builtin.set_fact:
     turnpwd: "{{ turnserver.shared_password | default((turnpwd_current.stdout | length > 0) | ternary(turnpwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"
 
 # Jicofo
 - name: Try to retrieve current jicofo password
-  shell: /usr/bin/grep -s ^JICOFO_AUTH_PASSWORD "/etc/jitsi/jicofo/config" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
+  ansible.builtin.shell: /usr/bin/grep -s ^JICOFO_AUTH_PASSWORD "/etc/jitsi/jicofo/config" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
   register: jicofopwd_current
   check_mode: false
   changed_when: false
@@ -21,12 +21,12 @@
     - skip_ansible_lint
 
 - name: Either use jicofo password from host_vars, the current one or a new random one
-  set_fact:
+  ansible.builtin.set_fact:
     jicofopwd: "{{ jitsi.jicofo_password | default((jicofopwd_current.stdout | length > 0) | ternary(jicofopwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"
 
 # Videobridge
 - name: Try to retrieve current videobridge password
-  shell: /usr/bin/grep -s ^JVB_SECRET "/etc/jitsi/videobridge/config" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
+  ansible.builtin.shell: /usr/bin/grep -s ^JVB_SECRET "/etc/jitsi/videobridge/config" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
   register: jvbpwd_current
   check_mode: false
   changed_when: false
@@ -34,5 +34,5 @@
     - skip_ansible_lint
 
 - name: Either use jvb password from host_vars, the current one or a new random one
-  set_fact:
+  ansible.builtin.set_fact:
     jvbpwd: "{{ jitsi.jvb_password | default((jvbpwd_current.stdout | length > 0) | ternary(jvbpwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"

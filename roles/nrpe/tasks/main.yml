@@ -1,35 +1,36 @@
 - name: Install NRPE-Server
-  package:
+  ansible.builtin.package:
     name: nagios-nrpe-server
 
 - name: Configure NRPE-Server
-  template:
+  ansible.builtin.template:
     src: "nrpe_local.cfg.j2"
     dest: "/etc/nagios/nrpe_local.cfg"
     owner: root
-    group: root
+    group: nagios
+    mode: "0640"
   notify: Reload nagios-nrpe-server
 
 - name: Install Nagios Plugins
-  package:
+  ansible.builtin.package:
     name:
-    - nagios-plugins-standard
-    - nagios-plugins-contrib
+      - nagios-plugins-standard
+      - nagios-plugins-contrib
 
 - name: Create directory for local NRPE plugins
-  file:
+  ansible.builtin.file:
     path: "/usr/local/nrpe-plugins/"
     state: directory
     mode: "0755"
 
 - name: Create symlink for utils.sh
-  file:
+  ansible.builtin.file:
     src: "/usr/lib/nagios/plugins/utils.sh"
     dest: "/usr/local/nrpe-plugins/utils.sh"
     state: link
 
 - name: Install check_systemd_service NRPE plugin
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "/usr/local/nrpe-plugins/{{ item }}"
     owner: root
@@ -39,8 +40,8 @@
     - check_systemd_service
     - check_jitsi_videobridge
 
-- name: enable NRPE-Server
-  systemd:
+- name: Enable NRPE-Server
+  ansible.builtin.systemd:
     name: nagios-nrpe-server
     state: started
-    enabled: yes
+    enabled: true

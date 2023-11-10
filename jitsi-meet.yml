@@ -1,4 +1,5 @@
-- hosts: jitsi
+- name: Install server with Jitsi-Meet
+  hosts: jitsi
   remote_user: root
   roles:
     - set_passwords

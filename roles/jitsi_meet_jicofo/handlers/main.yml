@@ -1,4 +1,4 @@
-- name: restart jicofo
-  service:
+- name: Restart jicofo
+  ansible.builtin.service:
     name: jicofo.service
     state: restarted

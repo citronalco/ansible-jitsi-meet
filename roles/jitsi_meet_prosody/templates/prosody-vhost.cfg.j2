@@ -58,7 +58,6 @@ VirtualHost "{{ inventory_hostname }}"
     }
     av_moderation_component = "avmoderation.{{ inventory_hostname }}"
     speakerstats_component = "speakerstats.{{ inventory_hostname }}"
-    conference_duration_component = "conferenceduration.{{ inventory_hostname }}"
     end_conference_component = "endconference.{{ inventory_hostname }}"
     -- we need bosh
     modules_enabled = {
@@ -148,9 +147,6 @@ Component "focus.{{ inventory_hostname }}" "client_proxy"
     target_address = "focus@auth.{{ inventory_hostname }}"
 
 Component "speakerstats.{{ inventory_hostname }}" "speakerstats_component"
-    muc_component = "conference.{{ inventory_hostname }}"
-
-Component "conferenceduration.{{ inventory_hostname }}" "conference_duration_component"
     muc_component = "conference.{{ inventory_hostname }}"
 
 Component "endconference.{{ inventory_hostname }}" "end_conference"

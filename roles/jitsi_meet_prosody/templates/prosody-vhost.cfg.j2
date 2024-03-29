@@ -62,7 +62,6 @@ VirtualHost "{{ inventory_hostname }}"
     -- we need bosh
     modules_enabled = {
         "bosh";
-        "pubsub";
         "ping"; -- Enable mod_ping
         "speakerstats";
         "external_services";

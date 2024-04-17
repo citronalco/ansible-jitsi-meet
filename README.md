@@ -1,25 +1,25 @@
 # Jitsi-Meet
 
-Jitsi-Meet-Server auf Debian 11.
+Set up a Jitsi Meet server on Debian.
 
-Es können mehrere Domainnamen für den Server verwendet werden. Für jede Domain kann die Jitsi-Meet-GUI einzeln angepasst werden.
-Standardmäßig kann jeder Meetings starten. Es kann aber auch eingestellt werden, dass nur angelegte Benutzer Meetings starten und/oder betreten können.
+Supports multiple domain names, with GUI customizations for each domain.
+By default everyone can start a meeting, but there are options to only allow authenticated users to create and/or join meetings 
 
-Nicht installiert wird die Videoaufnahmekomponente Jibri.
+Jibri (to record meetins) does not get installed.
 
 ### Installation
-1. Servername, IPv4- und IPv6-Adresse in `hosts` eintragen
-2. Einstellungen in `host_vars/SERVERNAME` vornehmen
-3. Ausrollen mit `ansible-playbook -i hosts jitsi-meet.yml`
+1. Enter server name, IPv4 and IPv6 addresse in `hosts`
+2. Apply your settings in `host_vars/SERVERNAME`
+3. Start installation with `ansible-playbook -i hosts jitsi-meet.yml`
 
-### Anpassungen
-Mit `/etc/jitsi/meet/DOMAINNAME/nginx-override.conf` können eigene Logos, Icons und eine eigene interface_config.js zum Anpassen der Jitsi-Meet-Weboberfläche eingebunden werden.
+### GUI customizations
+In `/etc/jitsi/meet/DOMAINNAME/nginx-override.conf` you can include your own logos, icons and your own interface_config.js to customize the Jitsi Meet web GUI.
 
-Mit `/etc/jitsi/meet/DOMAINNAME/config.js` können Standardeinstellungen für die Meetings festgelegt werden (z.B. ob am Anfang alle Mikros stumm und alle Kameras aus sind).
+in `/etc/jitsi/meet/DOMAINNAME/config.js` you can configure default settings for the meetings (i.e. if meetings start with all microphones muted and webcams disabled).
 
-Dateien für das Branding können im Verzeichnis `/etc/jitsi/meet/DOMAINNAME/branding/` abgelegt werden.
-Das Verzeichnis ist erreichbar über https://DOMAINNAME/branding/
+Put your logos and icons into the directory `/etc/jitsi/meet/DOMAINNAME/branding/`
+This directory is accessible via https://DOMAINNAME/branding/
 
-Diese Anpassungen werden beim erneuten Ausrollen und bei Jitsi-Updates nicht überschrieben.
+GUI customizations are kept when running this playbook again and when updating Jitsi Meet.
 
-__Die Anpassungen für meet.bingo-ev.de liegen hier: https://git.bingo-ev.de/geierb/jitsi-meet-config__
+__Customizations for für meet.bingo-ev.de are here: https://git.bingo-ev.de/infrastructure/jitsi-meet/jitsi-meet-config__

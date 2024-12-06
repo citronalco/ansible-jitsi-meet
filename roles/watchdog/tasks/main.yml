@@ -1,0 +1,26 @@
+- name: Check for available watchdog device
+  ansible.builtin.stat:
+    path: /dev/watchdog
+  register: stat_watchdogdev
+
+- name: Load softdog module
+  ansible.builtin.lineinfile:
+    path: /etc/modules
+    line: softdog
+    state: present
+  when: not stat_watchdogdev.stat.exists
+  notify:
+    - Load softdog module
+    - Restart watchdog
+
+- name: Install watchdog package
+  ansible.builtin.apt:
+    pkg: "watchdog"
+    state: present
+
+- name: Configure watchdog
+  ansible.builtin.template:
+    src: watchdog.conf.j2
+    dest: /etc/watchdog.conf
+    mode: "0644"
+  notify: Restart watchdog

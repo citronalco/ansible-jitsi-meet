@@ -1,0 +1,10 @@
+- name: Load softdog module
+  community.general.modprobe:
+    name: softdog
+
+- name: Restart watchdog
+  ansible.builtin.service:
+    name: watchdog
+    state: restarted
+  # restart often fails
+  ignore_errors: true

@@ -4,6 +4,7 @@
   roles:
     - set_passwords
     - hostname
+    - watchdog
     - jitsi_meet_packages
     - certbot
     - jitsi_meet_web

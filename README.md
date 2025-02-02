@@ -15,11 +15,11 @@ Jibri (to record meetins) does not get installed.
 ### GUI customizations
 In `/etc/jitsi/meet/DOMAINNAME/nginx-override.conf` you can include your own logos, icons and your own interface_config.js to customize the Jitsi Meet web GUI.
 
-in `/etc/jitsi/meet/DOMAINNAME/config.js` you can configure default settings for the meetings (i.e. if meetings start with all microphones muted and webcams disabled).
+In `/etc/jitsi/meet/DOMAINNAME/config-custom.js` you can customize settings for the meetings (i.e. if meetings start with all microphones muted and webcams disabled).
 
 Put your logos and icons into the directory `/etc/jitsi/meet/DOMAINNAME/branding/`
 This directory is accessible via https://DOMAINNAME/branding/
 
-GUI customizations are kept when running this playbook again and when updating Jitsi Meet.
+Customizations are kept when running this playbook again and when updating Jitsi Meet.
 
 __Customizations for für meet.bingo-ev.de are here: https://git.bingo-ev.de/infrastructure/jitsi-meet/jitsi-meet-config__

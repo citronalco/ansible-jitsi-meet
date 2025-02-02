@@ -1,0 +1,6 @@
+// default config
+<!--#include file="interface_config-default.js" -->
+// override default example domain names
+<!--#include file="interface_config-custom.js" -->
+// merge configs
+interfaceConfig = Object.assign({}, interfaceConfig, interfaceConfigCustom);

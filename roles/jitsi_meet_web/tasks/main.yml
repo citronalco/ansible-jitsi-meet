@@ -84,10 +84,17 @@
     - ["images/favicon.ico", "images/apple-touch-icon.png", "images/watermark.svg", "interface_config.js"]
   when: item[0].changed
 
-- name: Create minimal default Jitsi Meet configuration if none exists
+- name: Create config.js
   ansible.builtin.template:
     src: config.js.j2
     dest: "/etc/jitsi/meet/{{ item }}/config.js"
+    mode: "0644"
+  loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
+
+- name: Create minimal custom Jitsi Meet configuration if none exists
+  ansible.builtin.template:
+    src: config-custom.js.j2
+    dest: "/etc/jitsi/meet/{{ item }}/config-custom.js"
     mode: "0644"
     force: false
   loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
@@ -96,4 +103,19 @@
   ansible.builtin.command: mv /etc/jitsi/meet/{{ item }}-config.js /etc/jitsi/meet/{{ item }}-config.js.dist
   args:
     removes: /etc/jitsi/meet/{{ item }}-config.js
+  loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
+
+- name: Create interface_config.js
+  ansible.builtin.template:
+    src: interface_config.js.j2
+    dest: "/etc/jitsi/meet/{{ item }}/interface_config.js"
+    mode: "0644"
+  loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
+
+- name: Create minimal custom Jitsi Meet interface configuration if none exists
+  ansible.builtin.template:
+    src: interface_config-custom.js.j2
+    dest: "/etc/jitsi/meet/{{ item }}/interface_config-custom.js"
+    mode: "0644"
+    force: false
   loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"

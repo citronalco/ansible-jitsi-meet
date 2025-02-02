@@ -1,11 +1,25 @@
 # Originaldateien liegen unter /usr/share/jitsi-meet/
 
-# Benutzeroberfläche
+# config.js
+location = /config-default.js {
+    alias /usr/share/jitsi-meet-web-config/config.js;
+}
+location = /config-custom.js {
+    alias /etc/jitsi/meet/meet.geierb.de/config-custom.js;
+}
+
+# interface_config.js
 location = /interface_config.js {
     alias /etc/jitsi/meet/{{ item }}/interface_config.js;
 }
+location = /interface_config-default.js {
+    alias /usr/share/jitsi-meet-web-config/interface_config.js;
+}
+location = /config-custom.js {
+    alias /etc/jitsi/meet/meet.geierb.de/config-custom.js;
+}
 
-# bestehende Grafiken
+# icons
 location = /favicon.ico {
     alias /etc/jitsi/meet/{{ item }}/images/favicon.ico;
 }
@@ -19,7 +33,7 @@ location = /images/watermark.svg {
     alias /etc/jitsi/meet/{{ item }}/images/watermark.svg;
 }
 
-# Verzeichnis für Branding-Daten
+# branding files
 location ~ ^/branding/(.+)$ {
     alias /etc/jitsi/meet/{{ item }}/branding/$1;
 }

@@ -57,10 +57,14 @@ server {
     }
 }
 server {
-    #listen 443 ssl http2;
-    #listen [::]:443 ssl http2;
+{% if turns_hostname is defined %}
     listen 4444 ssl http2;
     listen [::]:4444 ssl http2;
+{% else %}
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+{% endif %}
+
     server_name {{ item }};
 
     access_log /var/log/nginx/access.log anonymized;

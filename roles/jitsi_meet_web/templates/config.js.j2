@@ -6,10 +6,19 @@ config.hosts.domain = '{{ inventory_hostname }}'';
 config.hosts.anonymousdomain = 'guest.{{ inventory_hostname }}';
 config.hosts.muc = 'conference.{{ inventory_hostname }}';
 config.bosh = 'https://{{ inventory_hostname }}/http-bind';
+config.p2p.stunServers = [
+    //{ urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' },
+    { urls: 'stun:{{ inventory_hostname }}:3478' },
+    { urls: 'stun:{{ inventory_hostname }}:5349' }
+];
 
+{% if turns_hostname is defined %}
 // to be able to multiplex Jitsi Meet and Coturn on port 443, we have to use bosh instead of websockets
-//config.websocket: 'wss://{{ inventory_hostname }}/xmpp-websocket';
+config.websocket = undefined;
 config.preferBosh = true;
+{% else %}
+config.websocket = 'wss://{{ inventory_hostname }}/xmpp-websocket';
+{% endif %}
 
 let configDefault = JSON.parse(JSON.stringify(config));
 config = {}

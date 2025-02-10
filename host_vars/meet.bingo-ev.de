@@ -23,7 +23,7 @@ jitsi:
   # - recorder.meet.bingo-ev.de
 
 # Falls der TURNS-Server wegen besserer Firmenfirewall-Durchdringung auf Port 443 laufen soll,
-# muss hier ein zusätzlicher Domainname angegeben werden, dessen A-Record ebenfalls auf den Jitsi-Server zeigt (Default: leer)
+# muss der Jitsi-Server einen zweiten Domainname haben (A-Record) (Default: leer)
 #turns_hostname: turns.bingo-ev.de
 
 nrpe:

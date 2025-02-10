@@ -22,12 +22,30 @@
   notify:
     - Restart jicofo
 
-- name: Set Hostname in jicofo.conf
+- name: Set client-proxy in jicofo.conf
   ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/jicofo.conf"
     regexp: '^(\s*)client-proxy: '
     backrefs: true
     line: '\1client-proxy: "focus.{{ inventory_hostname }}"'
+  notify:
+    - Restart jicofo
+
+- name: Set xmpp-domain in jicofo.conf
+  ansible.builtin.lineinfile:
+    path: "/etc/jitsi/jicofo/jicofo.conf"
+    regexp: '^(\s*)xmpp-domain: '
+    backrefs: true
+    line: '\1xmpp-domain: "{{ inventory_hostname }}"'
+  notify:
+    - Restart jicofo
+
+- name: Set Auth Domain in jicofo.conf
+  ansible.builtin.lineinfile:
+    path: "/etc/jitsi/jicofo/jicofo.conf"
+    regexp: '^(\s*)domain: '
+    backrefs: true
+    line: '\1domain: "auth.{{ inventory_hostname }}"'
   notify:
     - Restart jicofo
 

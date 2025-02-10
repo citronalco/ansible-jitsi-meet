@@ -73,25 +73,70 @@
     mode: "0755"
   loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
 
-- name: Ensure Jitsi-Meet customization file /etc/jitsi/meet/{{ inventory_hostname }}/nginx-override.conf exists
-  ansible.builtin.template:
-    src: nginx-override.conf.j2
-    dest: "/etc/jitsi/meet/{{ item }}/nginx-override.conf"
-    mode: "0644"
-    force: false
-  loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
-  register: nginx_override
+#- name: Ensure Jitsi-Meet customization file /etc/jitsi/meet/{{ inventory_hostname }}/nginx-override.conf exists
+#  ansible.builtin.template:
+#    src: nginx-override.conf.j2
+#    dest: "/etc/jitsi/meet/{{ item }}/nginx-override.conf"
+#    mode: "0644"
+#    force: false
+#  loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
+#  register: nginx_override
+
+#- name: Populate customizations directory with Jitsi-Meet default if nginx-override.conf got created
+#  ansible.builtin.file:
+#    src: "/usr/share/jitsi-meet/{{ item[1] }}"
+#    dest: "/etc/jitsi/meet/{{ item[0].item }}/{{ item[1] }}"
+#    state: link
+#    force: false
+#  with_nested:
+#    - "{{ nginx_override.results }}"
+#    - ["images/favicon.svg", "images/apple-touch-icon.png", "images/watermark.svg"]
+#  when: item[0].changed
 
 - name: Populate customizations directory with Jitsi-Meet default if nginx-override.conf got created
   ansible.builtin.file:
-    src: "/usr/share/jitsi-meet/{{ item[1] }}"
-    dest: "/etc/jitsi/meet/{{ item[0].item }}/{{ item[1] }}"
-    state: link
+    dest: "/etc/jitsi/meet/{{ item[0] }}/{{ item[1] }}"
+    state: directory
+    mode: "0755"
     force: false
   with_nested:
-    - "{{ nginx_override.results }}"
-    - ["images/favicon.ico", "images/apple-touch-icon.png", "images/watermark.svg", "interface_config.js"]
-  when: item[0].changed
+    - "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
+    - ["branding", "images"]
+
+- name: Create branding.json example file
+  ansible.builtin.template:
+    src: branding.json.j2
+    dest: "/etc/jitsi/meet/{{ item }}/branding/branding.json"
+    mode: "0644"
+    force: false
+  loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
+
+- name: Create Jitsi-Meet customization file /etc/jitsi/meet/{{ inventory_hostname }}/nginx-override.conf
+  ansible.builtin.blockinfile:
+    create: true
+    path: "/etc/jitsi/meet/{{ item }}/nginx-override.conf"
+    mode: "0644"
+    insertbefore: BOF
+    block: |
+      # config.js
+      location = /config.default.js { alias /usr/share/jitsi-meet-web-config/config.js; }
+      location = /config.local.js { alias /etc/jitsi/meet/{{ item }}/config.local.js; }
+      # interface_config.js
+      location = /interface_config.js { alias /etc/jitsi/meet/{{ item }}/interface_config.js;  }
+      location = /interface_config.default.js { alias /usr/share/jitsi-meet-web-config/interface_config.js; }
+      location = /interface_config.local.js { alias /etc/jitsi/meet/{{ item }}/interface_config.local.js; }
+      # branding files (see "External API url used to receive branding specific information" in config.json)
+      location ~ ^/branding/(.+)$ { alias /etc/jitsi/meet/{{ item }}/branding/$1; }
+
+      # YOU MAY SAFELY INSERT CUSTOMIZATIONS BELOW THIS BLOCK
+      # e.g.
+      # location = /static/welcomePageAdditionalContent.html { alias /etc/jitsi/meet/{{ item }}/welcomePageAdditionalContent.html; }
+      # location = /favicon.svg { alias /etc/jitsi/meet/{{ item }}/images/favicon.svg; }
+      # location = /images/favicon.svg { alias /etc/jitsi/meet/{{ item }}/images/favicon.svg; }
+      # location = /images/apple-touch-icon.png { alias /etc/jitsi/meet/{{ item }}/images/apple-touch-icon.png; }
+      # location = /images/watermark.svg { alias /etc/jitsi/meet/{{ item }}/images/watermark.svg; }
+
+  loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
 
 - name: Create config.js
   ansible.builtin.template:

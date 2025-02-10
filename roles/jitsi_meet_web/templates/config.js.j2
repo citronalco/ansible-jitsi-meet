@@ -1,8 +1,10 @@
+// {{ ansible_managed }}
+
 // get default config
-<!--#include file="config-default.js" -->
+<!--#include file="config.default.js" -->
 
 // override default example domain names
-config.hosts.domain = '{{ inventory_hostname }}'';
+config.hosts.domain = '{{ inventory_hostname }}';
 config.hosts.anonymousdomain = 'guest.{{ inventory_hostname }}';
 config.hosts.muc = 'conference.{{ inventory_hostname }}';
 config.bosh = 'https://{{ inventory_hostname }}/http-bind';
@@ -24,7 +26,7 @@ let configDefault = JSON.parse(JSON.stringify(config));
 config = {}
 
 // get custom config
-<!--#include file="config-custom.js" -->
+<!--#include file="config.local.js" -->
 
 // merge configs
 config = Object.assign({}, configDefault, config);

@@ -1,10 +1,7 @@
-// default config
+// get default config
 <!--#include file="config-default.js" -->
-// override default example domain names
-<!--#include file="config-custom.js" -->
-// merge configs
-config = Object.assign({}, config, configCustom);
 
+// override default example domain names
 config.hosts.domain = '{{ inventory_hostname }}'';
 config.hosts.anonymousdomain = 'guest.{{ inventory_hostname }}';
 config.hosts.muc = 'conference.{{ inventory_hostname }}';
@@ -13,3 +10,12 @@ config.bosh = 'https://{{ inventory_hostname }}/http-bind';
 // to be able to multiplex Jitsi Meet and Coturn on port 443, we have to use bosh instead of websockets
 //config.websocket: 'wss://{{ inventory_hostname }}/xmpp-websocket';
 config.preferBosh = true;
+
+let configDefault = JSON.parse(JSON.stringify(config));
+config = {}
+
+// get custom config
+<!--#include file="config-custom.js" -->
+
+// merge configs
+config = Object.assign({}, configDefault, config);

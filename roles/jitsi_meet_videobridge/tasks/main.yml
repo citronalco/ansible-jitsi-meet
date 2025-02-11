@@ -22,6 +22,15 @@
   notify:
     - Restart jitsi-videobridge2
 
+# Only used if server is behind NAT
+#- name: Set stun server in sip-communicator.properties
+#  ansible.builtin.lineinfile:
+#    path: /etc/jitsi/videobridge/sip-communicator.properties
+#    regexp: '^org.ice4j.ice.harvest.STUN_MAPPING_HARVESTER_ADDRESSES='
+#    line: "org.ice4j.ice.harvest.STUN_MAPPING_HARVESTER_ADDRESSES={{ inventory_hostname }}:3478"
+#  notify:
+#    - Restart jitsi-videobridge2
+
 - name: Set Videobridge password in Videobridge config
   ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/config

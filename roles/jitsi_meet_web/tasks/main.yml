@@ -123,7 +123,7 @@
       location = /config.local.js { alias /etc/jitsi/meet/{{ item }}/config.local.js; }
       # interface_config.js
       location = /interface_config.js { alias /etc/jitsi/meet/{{ item }}/interface_config.js;  }
-      location = /interface_config.default.js { alias /usr/share/jitsi-meet-web-config/interface_config.js; }
+      location = /interface_config.default.js { alias /usr/share/jitsi-meet/interface_config.js; }
       location = /interface_config.local.js { alias /etc/jitsi/meet/{{ item }}/interface_config.local.js; }
       # branding files (see "External API url used to receive branding specific information" in config.json)
       location ~ ^/branding/(.+)$ { alias /etc/jitsi/meet/{{ item }}/branding/$1; }
@@ -137,6 +137,7 @@
       # location = /images/watermark.svg { alias /etc/jitsi/meet/{{ item }}/images/watermark.svg; }
 
   loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
+  notify: Reload nginx
 
 - name: Create config.js
   ansible.builtin.template:
@@ -147,8 +148,8 @@
 
 - name: Create minimal custom Jitsi Meet configuration if none exists
   ansible.builtin.template:
-    src: config-custom.js.j2
-    dest: "/etc/jitsi/meet/{{ item }}/config-custom.js"
+    src: config.local.js.j2
+    dest: "/etc/jitsi/meet/{{ item }}/config.local.js"
     mode: "0644"
     force: false
   loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
@@ -168,8 +169,8 @@
 
 - name: Create minimal custom Jitsi Meet interface configuration if none exists
   ansible.builtin.template:
-    src: interface_config-custom.js.j2
-    dest: "/etc/jitsi/meet/{{ item }}/interface_config-custom.js"
+    src: interface_config.local.js.j2
+    dest: "/etc/jitsi/meet/{{ item }}/interface_config.local.js"
     mode: "0644"
     force: false
   loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"

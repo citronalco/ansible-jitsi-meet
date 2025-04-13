@@ -13,11 +13,7 @@ external_service_secret = "{{ turnpwd }}";
 external_services = {
      { type = "stun", host = "{{ inventory_hostname }}", port = 3478 },
      { type = "turn", host = "{{ inventory_hostname }}", port = 3478, transport = "udp", secret = true, ttl = 86400, algorithm = "turn" },
-{% if turns_hostname is defined %}
-     { type = "turns", host = "{{ turns_hostname }}", port = 443, transport = "tcp", secret = true, ttl = 86400, algorithm = "turn" }
-{% else %}
      { type = "turns", host = "{{ inventory_hostname }}", port = 5349, transport = "tcp", secret = true, ttl = 86400, algorithm = "turn" }
-{% endif %}
 };
 
 cross_domain_bosh = false;

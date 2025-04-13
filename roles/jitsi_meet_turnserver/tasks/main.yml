@@ -21,14 +21,14 @@
   ansible.builtin.lineinfile:
     path: "/etc/turnserver.conf"
     regexp: "^cert="
-    line: "cert=/etc/coturn/certs/{{ turns_hostname | default(inventory_hostname) }}.fullchain.pem"
+    line: "cert=/etc/coturn/certs/{{ inventory_hostname }}.fullchain.pem"
   notify: Restart coturn
 
 - name: Set location of TLS key
   ansible.builtin.lineinfile:
     path: "/etc/turnserver.conf"
     regexp: "^pkey="
-    line: "pkey=/etc/coturn/certs/{{ turns_hostname | default(inventory_hostname) }}.privkey.pem"
+    line: "pkey=/etc/coturn/certs/{{ inventory_hostname }}.privkey.pem"
   notify: Restart coturn
 
 - name: Set static-auth-secret

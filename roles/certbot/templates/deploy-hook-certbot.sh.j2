@@ -18,7 +18,7 @@ fi
 # jitsi-meet.example.com will be replaced with the real domain of deployment
 for domain in $RENEWED_DOMAINS; do
         case $domain in
-        {{ turns_hostname | default(inventory_hostname) }})
+        {{ inventory_hostname }})
                 # Make sure the certificate and private key files are
                 # never world readable, even just for an instant while
                 # we're copying them into daemon_cert_root.

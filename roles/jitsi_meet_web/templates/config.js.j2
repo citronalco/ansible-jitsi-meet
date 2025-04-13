@@ -17,9 +17,7 @@ config.p2p.stunServers = [
 config.websocket = 'wss://{{ inventory_hostname }}/xmpp-websocket';
 websocketKeepAliveUrl: 'https://{{ inventory_hostname }}/' + subdir + '_unlock',
 
-// to be able to multiplex Jitsi Meet and Coturn on port 443 (variable turns_hostname defined), we have to use bosh instead of websockets
-// but even without multiplexing some more changes are required to get websockets working
-// see https://tutorials.celogeek.com/books/jitsi-meet-on-arch-linux/page/activate-websocket
+// if websocket and bosh are configured, prefer bosh
 config.preferBosh = true;
 
 let configDefault = JSON.parse(JSON.stringify(config));

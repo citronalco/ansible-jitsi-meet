@@ -5,29 +5,6 @@
     mode: "0644"
   notify: Reload nginx
 
-- name: Create TURNS/HTTPS reverse proxy configuration for TURNS on port 443
-  ansible.builtin.template:
-    src: coturn-reverse-proxy.conf.j2
-    dest: /etc/nginx/modules-available/coturn-reverse-proxy.conf
-    mode: "0644"
-  when: turns_hostname is defined
-  notify: Reload nginx
-
-- name: Enable TURNS/HTTPS reverse proxy configuration for TURNS on port 443
-  ansible.builtin.file:
-    src: /etc/nginx/modules-available/coturn-reverse-proxy.conf
-    dest: /etc/nginx/modules-enabled/coturn-reverse-proxy.conf
-    state: link
-  when: turns_hostname is defined
-  notify: Reload nginx
-
-- name: Disable TURNS/HTTPS reverse proxy configuration for TURNS on port 443
-  ansible.builtin.file:
-    state: absent
-    path: /etc/nginx/modules-enabled/coturn-reverse-proxy.conf
-  when: turns_hostname is undefined
-  notify: Reload nginx
-
 - name: Create Jitsi-Meet site configuration
   ansible.builtin.template:
     src: jitsi-meet-site.conf.j2

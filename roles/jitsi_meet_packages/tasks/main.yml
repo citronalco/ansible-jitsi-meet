@@ -48,8 +48,15 @@
     vtype: string
     value: "Generate a new self-signed certificate"
 
+- name: Tell installer to not use JaaS telephony dial-in support
+  ansible.builtin.debconf:
+    name: jitsi-meet
+    question: jitsi-meet/jaas-choice
+    vtype: boolean
+    value: false
+
 - name: Install nginx, openjdk and jisti-meet
   ansible.builtin.apt:
     pkg: ["nginx-full", "openjdk-17-jre-headless", "jitsi-meet"]
     state: latest
-    install_recommends: false
+    install_recommends: true

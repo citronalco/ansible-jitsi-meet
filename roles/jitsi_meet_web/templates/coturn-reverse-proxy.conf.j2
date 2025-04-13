@@ -2,20 +2,12 @@
 
 # see https://jitsi.github.io/handbook/docs/devops-guide/turn
 
-{% if turns_hostname is defined %}
-# {{ inventory_hostname }}:443 *only* offers turns (not turn or stun)
-# For turn and stun use {{ inventory_hostname }}:3478
-{% endif %}
-
 stream {
     map $ssl_preread_server_name $name {
         {{ inventory_hostname }} web_backend;
 {% for domain in jitsi.domain_aliases | default([]) %}
         {{ domain }} web_backend;
 {% endfor %}
-{% if turns_hostname is defined %}
-        {{ turns_hostname }} turn_backend;
-{% endif %}
     }
 
     upstream web_backend {

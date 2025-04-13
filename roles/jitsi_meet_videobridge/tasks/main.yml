@@ -1,26 +1,27 @@
-- name: Set MUC domain in sip-communicator.properties
-  ansible.builtin.lineinfile:
-    path: /etc/jitsi/videobridge/sip-communicator.properties
-    regexp: '^org.jitsi.videobridge.xmpp.user.shard.MUC_JIDS='
-    line: "org.jitsi.videobridge.xmpp.user.shard.MUC_JIDS=JvbBrewery@internal.auth.{{ inventory_hostname }}"
-  notify:
-    - Restart jitsi-videobridge2
-
-- name: Set Trusted-Domains in sip-communicator.properties
-  ansible.builtin.lineinfile:
-    path: /etc/jitsi/videobridge/sip-communicator.properties
-    regexp: '^org.jitsi.videobridge.xmpp.user.shard.DOMAIN='
-    line: "org.jitsi.videobridge.xmpp.user.shard.DOMAIN=auth.{{ inventory_hostname }}"
-  notify:
-    - Restart jitsi-videobridge2
-
-- name: Set Videobrige password in sip-communicator.properties
-  ansible.builtin.lineinfile:
-    path: /etc/jitsi/videobridge/sip-communicator.properties
-    regexp: '^org.jitsi.videobridge.xmpp.user.shard.PASSWORD='
-    line: "org.jitsi.videobridge.xmpp.user.shard.PASSWORD={{ jvbpwd }}"
-  notify:
-    - Restart jitsi-videobridge2
+# 2025: /etc/jitsi/videobridge/sip-communicator.properties gibt es nicht mehr!
+#- name: Set MUC domain in sip-communicator.properties
+#  ansible.builtin.lineinfile:
+#    path: /etc/jitsi/videobridge/sip-communicator.properties
+#    regexp: '^org.jitsi.videobridge.xmpp.user.shard.MUC_JIDS='
+#    line: "org.jitsi.videobridge.xmpp.user.shard.MUC_JIDS=JvbBrewery@internal.auth.{{ inventory_hostname }}"
+#  notify:
+#    - Restart jitsi-videobridge2
+#
+#- name: Set Trusted-Domains in sip-communicator.properties
+#  ansible.builtin.lineinfile:
+#    path: /etc/jitsi/videobridge/sip-communicator.properties
+#    regexp: '^org.jitsi.videobridge.xmpp.user.shard.DOMAIN='
+#    line: "org.jitsi.videobridge.xmpp.user.shard.DOMAIN=auth.{{ inventory_hostname }}"
+#  notify:
+#    - Restart jitsi-videobridge2
+#
+#- name: Set Videobrige password in sip-communicator.properties
+#  ansible.builtin.lineinfile:
+#    path: /etc/jitsi/videobridge/sip-communicator.properties
+#    regexp: '^org.jitsi.videobridge.xmpp.user.shard.PASSWORD='
+#    line: "org.jitsi.videobridge.xmpp.user.shard.PASSWORD={{ jvbpwd }}"
+#  notify:
+#    - Restart jitsi-videobridge2
 
 # Only used if server is behind NAT
 #- name: Set stun server in sip-communicator.properties

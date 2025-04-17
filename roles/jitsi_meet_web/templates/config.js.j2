@@ -8,17 +8,13 @@ config.hosts.domain = '{{ inventory_hostname }}';
 config.hosts.anonymousdomain = 'guest.{{ inventory_hostname }}';
 config.hosts.muc = 'conference.{{ inventory_hostname }}';
 config.bosh = 'https://{{ inventory_hostname }}/http-bind';
+config.websocket = 'wss://{{ inventory_hostname }}/xmpp-websocket';
+config.websocketKeepAliveUrl: 'https://{{ inventory_hostname }}/_unlock';
 config.p2p.stunServers = [
     //{ urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' },
     { urls: 'stun:{{ inventory_hostname }}:3478' },
     { urls: 'stun:{{ inventory_hostname }}:5349' }
 ];
-
-config.websocket = 'wss://{{ inventory_hostname }}/xmpp-websocket';
-websocketKeepAliveUrl: 'https://{{ inventory_hostname }}/' + subdir + '_unlock',
-
-// if websocket and bosh are configured, prefer bosh
-config.preferBosh = true;
 
 let configDefault = JSON.parse(JSON.stringify(config));
 config = {}

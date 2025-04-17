@@ -10,6 +10,7 @@ config.hosts.muc = 'conference.{{ inventory_hostname }}';
 config.bosh = 'https://{{ inventory_hostname }}/http-bind';
 config.websocket = 'wss://{{ inventory_hostname }}/xmpp-websocket';
 config.websocketKeepAliveUrl: 'https://{{ inventory_hostname }}/_unlock';
+config.dynamicBrandingUrl: 'branding/branding.json';
 config.p2p.stunServers = [
     //{ urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' },
     { urls: 'stun:{{ inventory_hostname }}:3478' },

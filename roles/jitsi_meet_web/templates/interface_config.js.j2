@@ -2,11 +2,6 @@
 
 // get default config
 <!--#include file="interface_config.default.js" -->
-let interfaceConfigDefault = JSON.parse(JSON.stringify(interfaceConfig));
-interfaceConfig = {}
 
 // get custom config
 <!--#include file="interface_config.local.js" -->
-
-// merge both configs
-interfaceConfig = Object.assign({}, interfaceConfigDefault, interfaceConfig);

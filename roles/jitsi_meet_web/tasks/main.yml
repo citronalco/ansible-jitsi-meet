@@ -70,7 +70,7 @@
 #    - ["images/favicon.svg", "images/apple-touch-icon.png", "images/watermark.svg"]
 #  when: item[0].changed
 
-- name: Populate customizations directory with Jitsi-Meet default if nginx-override.conf got created
+- name: Populate customizations directory
   ansible.builtin.file:
     dest: "/etc/jitsi/meet/{{ item[0] }}/{{ item[1] }}"
     state: directory
@@ -80,10 +80,10 @@
     - "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
     - ["branding", "images"]
 
-- name: Create branding.json example file
+- name: Create branding.json.example file
   ansible.builtin.template:
     src: branding.json.j2
-    dest: "/etc/jitsi/meet/{{ item }}/branding/branding.json"
+    dest: "/etc/jitsi/meet/{{ item }}/branding/branding.json.example"
     mode: "0644"
     force: false
   loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"

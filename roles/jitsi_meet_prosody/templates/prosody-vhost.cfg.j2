@@ -154,7 +154,7 @@ VirtualHost "recorder.{{ inventory_hostname }}"
     modules_enabled = {
         "smacks";
     }
-    authentication = "internal_plain"
+    authentication = "internal_hashed"
     smacks_max_old_sessions = 2000;
 
 -- Proxy to jicofo's user JID, so that it doesn't have to register as a component.

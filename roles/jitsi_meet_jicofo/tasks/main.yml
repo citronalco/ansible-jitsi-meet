@@ -1,27 +1,3 @@
-- name: Set Hostname in Jicofo config
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/config"
-    regexp: '^JICOFO_HOSTNAME='
-    line: "JICOFO_HOSTNAME={{ inventory_hostname }}"
-  notify:
-    - Restart jicofo
-
-- name: Set Auth Domain in Jicofo config
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/config"
-    regexp: '^JICOFO_AUTH_DOMAIN='
-    line: "JICOFO_AUTH_DOMAIN=auth.{{ inventory_hostname }}"
-  notify:
-    - Restart jicofo
-
-- name: Set Auth Password in Jicofo config
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/config"
-    regexp: '^JICOFO_AUTH_PASSWORD='
-    line: "JICOFO_AUTH_PASSWORD={{ jicofopwd }}"
-  notify:
-    - Restart jicofo
-
 - name: Set client-proxy in jicofo.conf
   ansible.builtin.lineinfile:
     path: "/etc/jitsi/jicofo/jicofo.conf"
@@ -80,11 +56,11 @@
   ansible.builtin.blockinfile:
     path: "/etc/jitsi/jicofo/jicofo.conf"
     block: |
-      authentication: {
-        enabled: {{ 'true' if jitsi.authenticator | default('anonymous') in ['internal_hashed', 'internal_plain'] else 'false' }}
-        type: XMPP
-        login-url: {{ inventory_hostname }}
-      }
+        authentication: {
+          enabled: {{ 'true' if jitsi.authenticator | default('anonymous') in ['internal_hashed', 'internal_plain'] else 'false' }}
+          type: XMPP
+          login-url: {{ inventory_hostname }}
+        }
     insertafter: 'jicofo {'
   notify:
     - Restart jicofo

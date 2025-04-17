@@ -1,7 +1,3 @@
-- name: Install Prosody
-  ansible.builtin.apt:
-    pkg: ["prosody", "lua-event", "lua-unbound"]
-
 - name: Create Prosody vHost configuration
   ansible.builtin.template:
     src: "prosody-vhost.cfg.j2"

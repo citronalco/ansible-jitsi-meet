@@ -12,8 +12,8 @@
     turnpwd: "{{ turnserver.shared_password | default((turnpwd_current.stdout | length > 0) | ternary(turnpwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"
 
 # Jicofo
-- name: Try to retrieve current jicofo password
-  ansible.builtin.shell: /usr/bin/grep -s ^JICOFO_AUTH_PASSWORD "/etc/jitsi/jicofo/config" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
+- name: Try to retrieve current jicofo password (focus)
+  ansible.builtin.shell: /usr/bin/grep -s "^\s*password:" "/etc/jitsi/jicofo/jicofo.conf" | /usr/bin/sed 's/.*:\s*\"\(.*\)\"/\1/' 
   register: jicofopwd_current
   check_mode: false
   changed_when: false
@@ -25,8 +25,9 @@
     jicofopwd: "{{ jitsi.jicofo_password | default((jicofopwd_current.stdout | length > 0) | ternary(jicofopwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"
 
 # Videobridge
-- name: Try to retrieve current videobridge password
-  ansible.builtin.shell: /usr/bin/grep -s ^JVB_SECRET "/etc/jitsi/videobridge/config" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
+- name: Try to retrieve current videobridge password (jvb)
+  ansible.builtin.shell: /usr/bin/grep -s "^\s*PASSWORD=" /etc/jitsi/videobridge/jvb.conf | /usr/bin/sed 's/.*=\s*\"\(.*\)\"/\1/'
+
   register: jvbpwd_current
   check_mode: false
   changed_when: false

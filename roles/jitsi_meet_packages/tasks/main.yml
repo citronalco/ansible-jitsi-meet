@@ -57,6 +57,6 @@
 
 - name: Install nginx, openjdk and jisti-meet
   ansible.builtin.apt:
-    pkg: ["nginx-full", "openjdk-17-jre-headless", "jitsi-meet"]
+    pkg: ["nginx-full", "openjdk-17-jre-headless", "jitsi-meet", "jitsi-meet-turnserver","prosody", "lua-event", "lua-unbound"]
     state: latest
     install_recommends: true

@@ -50,26 +50,6 @@
     mode: "0755"
   loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
 
-#- name: Ensure Jitsi-Meet customization file /etc/jitsi/meet/{{ inventory_hostname }}/nginx-override.conf exists
-#  ansible.builtin.template:
-#    src: nginx-override.conf.j2
-#    dest: "/etc/jitsi/meet/{{ item }}/nginx-override.conf"
-#    mode: "0644"
-#    force: false
-#  loop: "{{ jitsi.domain_aliases | default([]) + [inventory_hostname] }}"
-#  register: nginx_override
-
-#- name: Populate customizations directory with Jitsi-Meet default if nginx-override.conf got created
-#  ansible.builtin.file:
-#    src: "/usr/share/jitsi-meet/{{ item[1] }}"
-#    dest: "/etc/jitsi/meet/{{ item[0].item }}/{{ item[1] }}"
-#    state: link
-#    force: false
-#  with_nested:
-#    - "{{ nginx_override.results }}"
-#    - ["images/favicon.svg", "images/apple-touch-icon.png", "images/watermark.svg"]
-#  when: item[0].changed
-
 - name: Populate customizations directory
   ansible.builtin.file:
     dest: "/etc/jitsi/meet/{{ item[0] }}/{{ item[1] }}"

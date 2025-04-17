@@ -1,7 +1,3 @@
-- name: Install Jitsi-Meet-Turnserver
-  ansible.builtin.apt:
-    pkg: ["jitsi-meet-turnserver"]
-
 - name: Create directory for systemd service override
   ansible.builtin.file:
     path: "/etc/systemd/system/coturn.service.d"

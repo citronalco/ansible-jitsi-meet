@@ -1,16 +1,18 @@
-- name: Install gpg
-  ansible.builtin.apt:
-    pkg: ["gpg", "gpg-agent"]
-    install_recommends: false
-    update_cache: true
+#- name: Install gpg
+#  ansible.builtin.apt:
+#    pkg: ["gpg", "gpg-agent"]
+#    install_recommends: false
+#    update_cache: true
 
-- name: Add apt-key of jisti.org
-  ansible.builtin.apt_key:
+- name: Add repository key for jisti.org
+  get_url:
     url: "https://download.jitsi.org/jitsi-key.gpg.key"
+    dest: "/etc/apt/keyrings/apt.jitsi.org.asc"
+    mode: "0644"
 
-- name: Add jitsi.org repository
-  ansible.builtin.apt_repository:
-    repo: "deb https://download.jitsi.org stable/"
+- name: Add repository for Jitsi
+  apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/apt.jitsi.org.asc] https://download.jitsi.org stable/"
     filename: jitsi
 
 - name: Preconfigure hostname used by postinst scripts of jitsi-meet-prosody package
@@ -48,8 +50,16 @@
     vtype: string
     value: "Generate a new self-signed certificate"
 
+- name: Tell installer to not use JaaS telephony dial-in support
+  ansible.builtin.debconf:
+    name: jitsi-meet
+    question: jitsi-meet/jaas-choice
+    vtype: boolean
+    value: false
+
 - name: Install nginx, openjdk and jisti-meet
   ansible.builtin.apt:
-    pkg: ["nginx-full", "openjdk-17-jre-headless", "jitsi-meet"]
+    pkg: ["nginx-full", "openjdk-17-jre-headless", "jitsi-meet", "jitsi-meet-turnserver","prosody", "lua-event", "lua-unbound"]
+    update_cache: true
     state: latest
-    install_recommends: false
+    install_recommends: true

@@ -1,26 +1,12 @@
-- name: Check for available watchdog device
-  ansible.builtin.stat:
-    path: /dev/watchdog
-  register: stat_watchdogdev
+- name: Create directory for local systemd-system overrides
+  ansible.builtin.file:
+    path: "/etc/systemd/system.conf.d"
+    state: directory
+    mode: "0755"
 
-- name: Load softdog module
-  ansible.builtin.lineinfile:
-    path: /etc/modules
-    line: softdog
-    state: present
-  when: not stat_watchdogdev.stat.exists
-  notify:
-    - Load softdog module
-    - Restart watchdog
-
-- name: Install watchdog package
-  ansible.builtin.apt:
-    pkg: "watchdog"
-    state: present
-
-- name: Configure watchdog
-  ansible.builtin.template:
-    src: watchdog.conf.j2
-    dest: /etc/watchdog.conf
+- name: Enable systemd watchdog
+  ansible.builtin.copy:
+    src: "system-override.conf"
+    dest: "/etc/systemd/system.conf.d/local.conf"
     mode: "0644"
-  notify: Restart watchdog
+  notify: Reread systemd configs

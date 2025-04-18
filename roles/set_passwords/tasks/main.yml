@@ -12,8 +12,8 @@
     turnpwd: "{{ turnserver.shared_password | default((turnpwd_current.stdout | length > 0) | ternary(turnpwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"
 
 # Jicofo
-- name: Try to retrieve current jicofo password
-  ansible.builtin.shell: /usr/bin/grep -s ^JICOFO_AUTH_PASSWORD "/etc/jitsi/jicofo/config" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
+- name: Try to retrieve current jicofo password (focus)
+  ansible.builtin.shell: /usr/bin/grep -s "^\s*password:" "/etc/jitsi/jicofo/jicofo.conf" | /usr/bin/sed 's/.*:\s*\"\(.*\)\"/\1/' 
   register: jicofopwd_current
   check_mode: false
   changed_when: false
@@ -25,8 +25,8 @@
     jicofopwd: "{{ jitsi.jicofo_password | default((jicofopwd_current.stdout | length > 0) | ternary(jicofopwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"
 
 # Videobridge
-- name: Try to retrieve current videobridge password
-  ansible.builtin.shell: /usr/bin/grep -s ^JVB_SECRET "/etc/jitsi/videobridge/config" | /usr/bin/sed 's/.*=\(.*\).*/\1/'
+- name: Try to retrieve current videobridge password (jvb)
+  ansible.builtin.shell: /usr/bin/grep -s "^\s*PASSWORD=" /etc/jitsi/videobridge/jvb.conf | /usr/bin/sed 's/.*=\s*\"\(.*\)\"/\1/'
   register: jvbpwd_current
   check_mode: false
   changed_when: false
@@ -36,3 +36,29 @@
 - name: Either use jvb password from host_vars, the current one or a new random one
   ansible.builtin.set_fact:
     jvbpwd: "{{ jitsi.jvb_password | default((jvbpwd_current.stdout | length > 0) | ternary(jvbpwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"
+
+# Jibri: jibri
+- name: Try to retrieve current videobridge password (jibri)
+  ansible.builtin.shell: /usr/bin/awk '/control-login/{flag=1;next}/}/{flag=0}flag' /etc/jitsi/jibri/jibri.conf | /usr/bin/grep "^\s*password" | /usr/bin/sed 's/.*=\s*\"\(.*\)\"/\1/'
+  register: jibripwd_current
+  check_mode: false
+  changed_when: false
+  tags:
+    - skip_ansible_lint
+
+- name: Either use jibri password from host_vars, the current one or a new random one
+  ansible.builtin.set_fact:
+    jibripwd: "{{ jibri.jibri_password | default((jibripwd_current.stdout | length > 0) | ternary(jibripwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"
+
+# Jibri: recorder
+- name: Try to retrieve current videobridge password (recorder)
+  ansible.builtin.shell: /usr/bin/awk '/call-login/{flag=1;next}/}/{flag=0}flag' /etc/jitsi/jibri/jibri.conf | /usr/bin/grep "^\s*password" | /usr/bin/sed 's/.*=\s*\"\(.*\)\"/\1/'
+  register: recorderpwd_current
+  check_mode: false
+  changed_when: false
+  tags:
+    - skip_ansible_lint
+
+- name: Either use recorder password from host_vars, the current one or a new random one
+  ansible.builtin.set_fact:
+    recorderpwd: "{{ jibri.recorder_password | default((recorderpwd_current.stdout | length > 0) | ternary(recorderpwd_current.stdout, lookup('password', '/dev/null chars=ascii_lowercase,ascii_uppercase,digits length=16'))) }}"

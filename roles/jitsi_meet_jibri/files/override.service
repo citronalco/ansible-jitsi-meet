@@ -1,0 +1,5 @@
+# Ansible managed
+
+[Service]
+ExecStartPre=
+ExecStartPre=sudo -u jibri /usr/bin/chromium --timeout=1000 --headless about:blank

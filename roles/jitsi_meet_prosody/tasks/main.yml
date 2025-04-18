@@ -1,7 +1,3 @@
-- name: Install Prosody
-  ansible.builtin.apt:
-    pkg: ["prosody", "lua-event", "lua-unbound"]
-
 - name: Create Prosody vHost configuration
   ansible.builtin.template:
     src: "prosody-vhost.cfg.j2"
@@ -66,7 +62,7 @@
 # Prosody does not need to run for this
 - name: Register Jicofo user (focus)
   ansible.builtin.shell:
-    cmd: "prosodyctl register focus auth.{{ inventory_hostname }} {{ jicofopwd }}"
+    cmd: 'prosodyctl register focus auth.{{ inventory_hostname }} "{{ jicofopwd }}"'
 
 - name: Make sure the focus@auth users roster includes the proxy component
   ansible.builtin.shell:
@@ -74,7 +70,7 @@
 
 - name: Register Videobridge users (jvb)
   ansible.builtin.shell:
-    cmd: "prosodyctl register jvb auth.{{ inventory_hostname }} {{ jvbpwd }}"
+    cmd: 'prosodyctl register jvb auth.{{ inventory_hostname }} "{{ jvbpwd }}"'
 
 # Password für jibri@auth.meet.mydomain für Aufnahmen mit Jibri
 #- name: Register Jibri users in auth domain

@@ -1,7 +1,3 @@
-- name: Install Jitsi-Meet-Turnserver
-  ansible.builtin.apt:
-    pkg: ["jitsi-meet-turnserver"]
-
 - name: Create directory for systemd service override
   ansible.builtin.file:
     path: "/etc/systemd/system/coturn.service.d"
@@ -21,14 +17,14 @@
   ansible.builtin.lineinfile:
     path: "/etc/turnserver.conf"
     regexp: "^cert="
-    line: "cert=/etc/coturn/certs/{{ turns_hostname | default(inventory_hostname) }}.fullchain.pem"
+    line: "cert=/etc/coturn/certs/{{ inventory_hostname }}.fullchain.pem"
   notify: Restart coturn
 
 - name: Set location of TLS key
   ansible.builtin.lineinfile:
     path: "/etc/turnserver.conf"
     regexp: "^pkey="
-    line: "pkey=/etc/coturn/certs/{{ turns_hostname | default(inventory_hostname) }}.privkey.pem"
+    line: "pkey=/etc/coturn/certs/{{ inventory_hostname }}.privkey.pem"
   notify: Restart coturn
 
 - name: Set static-auth-secret

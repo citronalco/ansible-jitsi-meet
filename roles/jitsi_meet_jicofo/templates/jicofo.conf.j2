@@ -1,0 +1,29 @@
+# Jicofo HOCON configuration. See reference.conf in /usr/share/jicofo/jicofo.jar for
+#available options, syntax, and default values.
+
+# {{ ansible_managed }}
+
+jicofo {
+  authentication: {
+    enabled: {{ 'true' if jitsi.authenticator | default('jitsi-anonymous') in ['internal_hashed', 'internal_plain'] else 'false' }}
+    type: XMPP
+    login-url: {{ inventory_hostname }}
+  }
+  xmpp: {
+    client: {
+      client-proxy: "focus.{{ inventory_hostname }}"
+      xmpp-domain: "{{ inventory_hostname }}"
+      domain: "auth.{{ inventory_hostname }}"
+      username: "focus"
+      password: "{{ jicofopwd }}"
+    }
+    trusted-domains: [ "recorder.{{ inventory_hostname }}" ]
+  }
+  bridge: {
+    brewery-jid: "JvbBrewery@internal.auth.{{ inventory_hostname }}"
+  }
+  jibri: {
+    brewery-jid: "JibriBrewery@internal.auth.{{ inventory_hostname }}"
+    pending-timeout: "90 seconds"
+  }
+}

@@ -1,43 +1,3 @@
-- name: Set MUC domain in sip-communicator.properties
-  ansible.builtin.lineinfile:
-    path: /etc/jitsi/videobridge/sip-communicator.properties
-    regexp: '^org.jitsi.videobridge.xmpp.user.shard.MUC_JIDS='
-    line: "org.jitsi.videobridge.xmpp.user.shard.MUC_JIDS=JvbBrewery@internal.auth.{{ inventory_hostname }}"
-  notify:
-    - Restart jitsi-videobridge2
-
-- name: Set Trusted-Domains in sip-communicator.properties
-  ansible.builtin.lineinfile:
-    path: /etc/jitsi/videobridge/sip-communicator.properties
-    regexp: '^org.jitsi.videobridge.xmpp.user.shard.DOMAIN='
-    line: "org.jitsi.videobridge.xmpp.user.shard.DOMAIN=auth.{{ inventory_hostname }}"
-  notify:
-    - Restart jitsi-videobridge2
-
-- name: Set Videobrige password in sip-communicator.properties
-  ansible.builtin.lineinfile:
-    path: /etc/jitsi/videobridge/sip-communicator.properties
-    regexp: '^org.jitsi.videobridge.xmpp.user.shard.PASSWORD='
-    line: "org.jitsi.videobridge.xmpp.user.shard.PASSWORD={{ jvbpwd }}"
-  notify:
-    - Restart jitsi-videobridge2
-
-- name: Set Videobridge password in Videobridge config
-  ansible.builtin.lineinfile:
-    path: /etc/jitsi/videobridge/config
-    regexp: '^JVB_SECRET='
-    line: "JVB_SECRET={{ jvbpwd }}"
-  notify:
-    - Restart jitsi-videobridge2
-
-- name: Set Hostname in Videobridge config
-  ansible.builtin.lineinfile:
-    path: /etc/jitsi/videobridge/config
-    regexp: '^JVB_HOSTNAME='
-    line: "JVB_HOSTNAME={{ inventory_hostname }}"
-  notify:
-    - Restart jitsi-videobridge2
-
 - name: Set Hostname for Videobridge websocket in jvb.conf
   ansible.builtin.lineinfile:
     path: /etc/jitsi/videobridge/jvb.conf
@@ -47,11 +7,39 @@
   notify:
     - Restart jitsi-videobridge2
 
-- name: Decrease Videobridge loglevel
+- name: Set xmpp domain for jvb user in jvb.conf
   ansible.builtin.lineinfile:
-    path: /etc/jitsi/videobridge/logging.properties
-    regexp: '^\.level='
-    line: ".level=WARNING"
+    path: /etc/jitsi/videobridge/jvb.conf
+    regexp: '^(\s*)DOMAIN=".*"'
+    backrefs: true
+    line: '\1DOMAIN="auth.{{ inventory_hostname }}"'
+  notify:
+    - Restart jitsi-videobridge2
+
+- name: Set xmpp password for jvb user in jvb.conf
+  ansible.builtin.lineinfile:
+    path: /etc/jitsi/videobridge/jvb.conf
+    regexp: '^(\s*)PASSWORD=".*"'
+    backrefs: true
+    line: '\1PASSWORD="{{ jvbpwd }}"'
+  notify:
+    - Restart jitsi-videobridge2
+
+- name: Set xmpp MUC jid in jvb.conf
+  ansible.builtin.lineinfile:
+    path: /etc/jitsi/videobridge/jvb.conf
+    regexp: '^(\s*)MUC_JIDS=".*"'
+    backrefs: true
+    line: '\1MUC_JIDS="jvbbrewery@internal.auth.{{ inventory_hostname }}"'
+  notify:
+    - Restart jitsi-videobridge2
+
+- name: Replace Jitsi STUN server with ours in jvb.conf
+  ansible.builtin.lineinfile:
+    path: /etc/jitsi/videobridge/jvb.conf
+    regexp: '^(\s*)addresses = \[".*'
+    backrefs: true
+    line: '\1addresses = ["{{ inventory_hostname }}:3478"]'
   notify:
     - Restart jitsi-videobridge2
 
@@ -70,5 +58,13 @@
     insertafter: "videobridge {"
     line: "    apis { rest { enabled = true } }"
   when: not rest_api.found
+  notify:
+    - Restart jitsi-videobridge2
+
+- name: Decrease Videobridge loglevel
+  ansible.builtin.lineinfile:
+    path: /etc/jitsi/videobridge/logging.properties
+    regexp: '^\.level='
+    line: ".level=WARNING"
   notify:
     - Restart jitsi-videobridge2

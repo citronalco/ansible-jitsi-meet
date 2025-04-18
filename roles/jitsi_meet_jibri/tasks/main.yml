@@ -1,0 +1,82 @@
+- name: Install Chromium
+  ansible.builtin.apt:
+    pkg: ["chromium", "chromium-sandbox", "chromium-driver"]
+
+- name: Install Jibri
+  ansible.builtin.apt:
+    pkg: ["jibri", ]
+    state: latest
+    install_recommends: true
+
+- name: Load snd-aloop kernel module
+  community.general.modprobe:
+    name: snd-aloop
+    persistent: present
+
+- name: Create storage dir
+  ansible.builtin.file:
+    path: "{{ jibri.storage_dir | default('/tmp/recordings') }}"
+    state: directory
+    mode: '0750'
+    owner: jibri
+    group: jitsi
+
+- name: Create Jibri configuration
+  ansible.builtin.template:
+    src: jibri.conf.j2
+    dest: /etc/jitsi/jibri/jibri.conf
+    mode: '0640'
+    owner: jibri
+    group: jitsi
+  notify:
+    - Restart jibri
+
+- name: Create dummy finalization script if none exists
+  ansible.builtin.template:
+    src: finalize_recording.sh.j2
+    dest: /etc/jitsi/jibri/finalize_recording.sh
+    group: jitsi
+    mode: '0750'
+    force: false
+
+- name: Register user jibri in auth domain
+  shell:
+    cmd: 'prosodyctl register jibri auth.{{ inventory_hostname }} "{{ jibripwd }}"'
+
+- name: Register user recorder in recorder domain
+  shell:
+    cmd: 'prosodyctl register recorder recorder.{{ inventory_hostname }} "{{ recorderpwd }}"'
+
+- name: Enable jibri service
+  ansible.builtin.systemd_service:
+    name: jibri.service
+    enabled: true
+
+- name: Create directory for systemd service override
+  ansible.builtin.file:
+    path: "/etc/systemd/system/jibri.service.d"
+    state: directory
+    mode: "0755"
+
+- name: Install systemd service override to to use Chromium instead of Chrome
+  ansible.builtin.copy:
+    src: "override.service"
+    dest: "/etc/systemd/system/jibri.service.d/ansible.conf"
+    mode: "0644"
+  notify:
+    - Reread systemd configs
+    - Restart jibri
+
+- name: Create directory for Chromium policies
+  ansible.builtin.file:
+    path: "/etc/chromium/policies/managed"
+    state: directory
+    mode: "0755"
+
+- name: Add Chromium policy to remove textbar from videos (Chrome is controlled by automated test software)
+  ansible.builtin.copy:
+    src: "managed_policies.json"
+    dest: "/etc/chromium/policies/managed/managed_policies.json"
+    mode: "0644"
+  notify:
+    - Restart jibri

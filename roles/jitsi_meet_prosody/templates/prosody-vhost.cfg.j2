@@ -1,6 +1,9 @@
 -- {{ ansible_managed }}
 -- reference: https://github.com/jitsi/jitsi-meet/blob/master/doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example
 
+-- We need this for prosody 13.0
+component_admins_as_room_owners = true
+
 plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 
 -- domain mapper options, must at least have domain base set to use the mapper
@@ -10,15 +13,12 @@ external_service_secret = "{{ turnpwd }}";
 external_services = {
      { type = "stun", host = "{{ inventory_hostname }}", port = 3478 },
      { type = "turn", host = "{{ inventory_hostname }}", port = 3478, transport = "udp", secret = true, ttl = 86400, algorithm = "turn" },
-{% if turns_hostname is defined %}
-     { type = "turns", host = "{{ turns_hostname }}", port = 443, transport = "tcp", secret = true, ttl = 86400, algorithm = "turn" }
-{% else %}
      { type = "turns", host = "{{ inventory_hostname }}", port = 5349, transport = "tcp", secret = true, ttl = 86400, algorithm = "turn" }
-{% endif %}
 };
 
 cross_domain_bosh = false;
 consider_bosh_secure = true;
+consider_websocket_secure = true;
 -- https_ports = { }; -- Remove this line to prevent listening on port 5284
 
 -- by default prosody 0.12 sends cors headers, if you want to disable it uncomment the following (the config is available on 0.12.1)
@@ -42,6 +42,11 @@ unlimited_jids = {
     "jvb@auth.{{ inventory_hostname }}"
 }
 
+-- https://prosody.im/doc/modules/mod_smacks
+smacks_max_unacked_stanzas = 5;
+smacks_hibernation_time = 60;
+smacks_max_old_sessions = 1;
+
 VirtualHost "{{ inventory_hostname }}"
     authentication = "{{ jitsi.authenticator | default("jitsi-anonymous") }}" -- do not delete me
     -- Properties below are modified by jitsi-meet-tokens package config
@@ -62,6 +67,8 @@ VirtualHost "{{ inventory_hostname }}"
     -- we need bosh
     modules_enabled = {
         "bosh";
+        "websocket";
+        "smacks";
         "ping"; -- Enable mod_ping
         "speakerstats";
         "external_services";
@@ -143,6 +150,13 @@ VirtualHost "auth.{{ inventory_hostname }}"
     authentication = "internal_hashed"
     smacks_hibernation_time = 15;
 
+VirtualHost "recorder.{{ inventory_hostname }}"
+    modules_enabled = {
+        "smacks";
+    }
+    authentication = "internal_hashed"
+    smacks_max_old_sessions = 2000;
+
 -- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
 Component "focus.{{ inventory_hostname }}" "client_proxy"
     target_address = "focus@auth.{{ inventory_hostname }}"
@@ -170,10 +184,3 @@ Component "lobby.{{ inventory_hostname }}" "muc"
 Component "metadata.{{ inventory_hostname }}" "room_metadata_component"
     muc_component = "conference.{{ inventory_hostname }}"
     breakout_rooms_component = "breakout.{{ inventory_hostname }}"
-
-VirtualHost "recorder.{{ inventory_hostname }}"
-    -- enabled = false
-    modules_enabled = {
-        "ping";
-    }
-    authentication = "internal_plain"

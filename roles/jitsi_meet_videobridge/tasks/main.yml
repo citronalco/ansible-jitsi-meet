@@ -43,7 +43,7 @@
   notify:
     - Restart jitsi-videobridge2
 
-- name: Check if REST API is enabled for statistics
+- name: Check if REST API is enabled for statistics and monitoring
   ansible.builtin.lineinfile:
     state: absent
     path: /etc/jitsi/videobridge/jvb.conf

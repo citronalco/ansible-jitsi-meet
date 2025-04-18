@@ -3,7 +3,7 @@
 // get default config
 <!--#include file="config.default.js" -->
 
-// override default example domain names
+// set sane defaults
 config.hosts.domain = '{{ inventory_hostname }}';
 config.hosts.anonymousdomain = 'guest.{{ inventory_hostname }}';
 config.hosts.muc = 'conference.{{ inventory_hostname }}';
@@ -18,5 +18,5 @@ config.p2p.stunServers = [
     { urls: 'stun:{{ inventory_hostname }}:5349' }
 ];
 
-// get custom config
+// override with custom config
 <!--#include file="config.local.js" -->

@@ -13,6 +13,7 @@
     - jitsi_meet_videobridge
     - jitsi_meet_turnserver
     - jitsi_meet_systemd
+    - jitsi_meet_jibri
     - nrpe
     - unattended_upgrades
     - logging

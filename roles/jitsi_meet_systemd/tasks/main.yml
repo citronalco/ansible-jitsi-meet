@@ -21,7 +21,8 @@
     - nginx
     - prosody
     - jicofo
-    - jitsi-videobridge2
+    - jibri-icewm
+    - jibri-xorg
     - nagios-nrpe-server
 
 - name: Create systemd overrides to restart services automatically on failure
@@ -33,7 +34,8 @@
     - nginx
     - prosody
     - jicofo
-    - jitsi-videobridge2
+    - jibri-icewm
+    - jibri-xorg
     - nagios-nrpe-server
   notify:
     - Reread systemd configs

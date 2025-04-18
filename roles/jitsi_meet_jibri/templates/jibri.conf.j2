@@ -1,0 +1,37 @@
+// Default values: https://github.com/jitsi/jibri/blob/master/src/main/resources/reference.conf
+
+jibri {
+  api {
+    xmpp {
+      environments = [
+        {
+          name = "prod_environment"
+          xmpp-server-hosts = [ "{{ inventory_hostname }}" ]
+          xmpp-domain = "{{ inventory_hostname }}"
+          control-login = {
+            domain = "auth.{{ inventory_hostname }}"
+            username = "jibri"
+            password = "{{ jibripwd }}"
+          }
+          control-muc = {
+            domain = "internal.auth.{{ inventory_hostname }}"
+            room-name = "JibriBrewery"
+            nickname = "Jibri1"
+          }
+          call-login = {
+            domain = "recorder.{{ inventory_hostname }}"
+            username = "recorder"
+            password = "{{ recorderpwd }}"
+          }
+          strip-from-room-domain = "conference."
+          usage-timeout = 0
+          trust-all-xmpp-certs = true
+        }
+      ]
+    }
+  }
+  recording {
+    recordings-directory = "{{ jibri.storage_dir | default("/tmp/recordings") }}"
+    finalize-script = "/etc/jitsi/jibri/finalize_recording.sh"
+  }
+}

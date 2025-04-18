@@ -4,7 +4,7 @@ admin:
 
 jitsi:
   # Wenn dieser Jitsi-Meet-Server auch unter anderen Domainnamen erreichbar sein soll, dann diese hier auflisten. (Default: leer)
-  # Die Servereinstellungen (z.B. Authentifizierung, User) sind für alle Domains gleich, die Jitsi-GUI kann aber für jede Domain
+  # Authentifizierung, User und Räume sind für alle Domains gleich, die Jitsi-GUI und die Config kann aber für jede Domain
   # einzeln in /etc/jitsi/meet/<domainname>/ angepasst werden.
   #domain_aliases:
   #  - meet.zettacloud.de
@@ -18,13 +18,9 @@ jitsi:
   # Sollen auch unauthentifizierte Gäste laufenden Meetings beitreten können? (Default: false)
   guests_allowed: true
 
-  # Falls Jibri-Server Aufnahmen erstellen sollen, hier ihre Hostnamen (FQDN) angeben
-  #jibri_server:
-  # - recorder.meet.bingo-ev.de
-
-# Falls der TURNS-Server wegen besserer Firmenfirewall-Durchdringung auf Port 443 laufen soll,
-# muss der Jitsi-Server einen zweiten Domainname haben (A-Record) (Default: leer)
-#turns_hostname: meet-turn.bingo-ev.de
+jibri:
+  # Verzeichnis für Aufnahmen
+  storage_dir: /mnt/storage
 
 nrpe:
   # Hier den Hostnamen der Monitoring-Server angeben (Default: leer)

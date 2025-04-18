@@ -1,0 +1,13 @@
+- name: Reread systemd configs
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart jicofo
+  ansible.builtin.service:
+    name: jicofo.service
+    state: restarted
+
+- name: Restart jibri
+  ansible.builtin.service:
+    name: jibri.service
+    state: restarted

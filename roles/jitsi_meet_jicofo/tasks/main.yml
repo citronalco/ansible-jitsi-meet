@@ -1,91 +1,10 @@
-- name: Set client-proxy in jicofo.conf
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/jicofo.conf"
-    regexp: '^(\s*)client-proxy: '
-    backrefs: true
-    line: '\1client-proxy: "focus.{{ inventory_hostname }}"'
-  notify:
-    - Restart jicofo
-
-- name: Set xmpp-domain in jicofo.conf
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/jicofo.conf"
-    regexp: '^(\s*)xmpp-domain: '
-    backrefs: true
-    line: '\1xmpp-domain: "{{ inventory_hostname }}"'
-  notify:
-    - Restart jicofo
-
-- name: Set Auth Domain in jicofo.conf
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/jicofo.conf"
-    regexp: '^(\s*)domain: '
-    backrefs: true
-    line: '\1domain: "auth.{{ inventory_hostname }}"'
-  notify:
-    - Restart jicofo
-
-- name: Set focus XMPP password in jicofo.conf
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/jicofo.conf"
-    regexp: '^(\s*)password: '
-    backrefs: true
-    line: '\1password: "{{ jicofopwd }}"'
-  notify:
-    - Restart jicofo
-
-- name: Set Trusted-Domains in jicofo.conf
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/jicofo.conf"
-    regexp: '^(\s*)trusted-domains: '
-    backrefs: true
-    line: '\1trusted-domains: [ {{ jitsi.jibri_server | default(["recorder." + inventory_hostname]) | map("to_json") | join(", ") }} ]'
-  notify:
-    - Restart jicofo
-
-- name: Set Brewery-Jid in jicofo.conf
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/jicofo.conf"
-    regexp: '^(\s*)brewery-jid: '
-    backrefs: true
-    line: '\1brewery-jid: "JvbBrewery@internal.auth.{{ inventory_hostname }}"'
-  notify:
-    - Restart jicofo
-
-- name: Enable/disable authentication in jicofo.conf
-  ansible.builtin.blockinfile:
-    path: "/etc/jitsi/jicofo/jicofo.conf"
-    block: |
-        authentication: {
-          enabled: {{ 'true' if jitsi.authenticator | default('anonymous') in ['internal_hashed', 'internal_plain'] else 'false' }}
-          type: XMPP
-          login-url: {{ inventory_hostname }}
-        }
-    insertafter: 'jicofo {'
-  notify:
-    - Restart jicofo
-
-- name: Enable authentication for recording in sip-communicator.properties
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/sip-communicator.properties"
-    regexp: '^org.jitsi.jicofo.jibri.BREWERY='
-    line: "org.jitsi.jicofo.jibri.BREWERY=JibriBrewery@internal.auth.{{ inventory_hostname }}"
-    create: true
-    mode: "0640"
-    owner: "jicofo"
-    group: "jitsi"
-  notify:
-    - Restart jicofo
-
-- name: Set timeout for recording in sip-communicator.properties
-  ansible.builtin.lineinfile:
-    path: "/etc/jitsi/jicofo/sip-communicator.properties"
-    regexp: '^org.jitsi.jicofo.jibri.PENDING_TIMEOUT='
-    line: "org.jitsi.jicofo.jibri.PENDING_TIMEOUT=90"
-    create: true
-    mode: "0640"
-    owner: "jicofo"
-    group: "jitsi"
+- name: Create jicofo configuration
+  ansible.builtin.template:
+    src: jicofo.conf.j2
+    dest: /etc/jitsi/jicofo/jicofo.conf
+    mode: '0640'
+    owner: jicofo
+    group: jitsi
   notify:
     - Restart jicofo
 

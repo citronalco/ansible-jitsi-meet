@@ -1,14 +1,17 @@
 // Use this file to override config properties from /usr/share/jitsi-meet-web-config/config.js
-// See /usr/share/jitsi-meet-web-config/config.js for all options
+// Documentation: https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-configuration
 
-// if websocket and bosh are configured, prefer bosh
+// if both websocket and bosh are configured, prefer bosh (default: false -> disabled)
 config.preferBosh = true;
 
-// disable analytics
+// disable analytics (default: false -> enabled)
 config.analytics.disabled = true;
 
-// enable p2p mode
-config.p2p.enabled = true;
+// disable p2p mode (default: true -> enabled)
+//config.p2p.enabled = false;
 
-// enable custom branding
+// enable custom branding (default: none)
 //config.dynamicBrandingUrl = 'branding/branding.json';
+
+// enable file recording (default: false -> disabled)
+config.recordingService = { enabled: true };

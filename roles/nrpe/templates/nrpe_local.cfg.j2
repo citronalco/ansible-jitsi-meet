@@ -7,13 +7,17 @@ allowed_hosts=127.0.0.1,{{ nrpe.allowed_hosts | default([]) | join(',') }}
 
 # Disk Space
 command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 15% -c 10% -p /
+command[check_disk_recordings]=/usr/lib/nagios/plugins/check_disk -w 15% -c 10% -p "{{ jibri.storage_dir | default("/tmp/recordings") }}"
 
 # systemd Services
-command[check_service_jicofo]=/usr/local/nrpe-plugins/check_systemd_service jicofo
 command[check_service_jitsi-videobridge2]=/usr/local/nrpe-plugins/check_systemd_service jitsi-videobridge2
 command[check_service_prosody]=/usr/local/nrpe-plugins/check_systemd_service prosody
 command[check_service_nginx]=/usr/local/nrpe-plugins/check_systemd_service nginx
 command[check_service_coturn]=/usr/local/nrpe-plugins/check_systemd_service coturn
+command[check_service_jicofo]=/usr/local/nrpe-plugins/check_systemd_service jicofo
+command[check_service_jibri]=/usr/local/nrpe-plugins/check_systemd_service jibri
+command[check_service_jibri-icewm]=/usr/local/nrpe-plugins/check_systemd_service jibri-icewm
+command[check_service_jibri-xorg]=/usr/local/nrpe-plugins/check_systemd_service jibri-xorg
 
 # prosodyctl check
 command[check_prosodyctl]=sudo /usr/local/nrpe-plugins/check_prosodyctl

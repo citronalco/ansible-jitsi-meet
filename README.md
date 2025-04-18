@@ -3,9 +3,9 @@
 Set up a Jitsi Meet server on Debian.
 
 Supports multiple domain names, with GUI customizations for each domain.
-By default everyone can start a meeting, but there are options to only allow authenticated users to create and/or join meetings 
+By default everyone can start a meeting, but there's an option to only allow authenticated users to create and/or join meetings.
 
-Jibri (to record meetins) does not get installed.
+Jibri (to record meetings) is included.
 
 ### Installation
 1. Enter server name, IPv4 and IPv6 addresse in `hosts`
@@ -13,12 +13,15 @@ Jibri (to record meetins) does not get installed.
 3. Start installation with `ansible-playbook -i hosts jitsi-meet.yml`
 
 ### GUI customizations
-In `/etc/jitsi/meet/DOMAINNAME/nginx-override.conf` you can include your own logos, icons and your own interface_config.js to customize the Jitsi Meet web GUI.
+You may override the default settings for each domain separately.
 
-In `/etc/jitsi/meet/DOMAINNAME/config-custom.js` you can customize settings for the meetings (i.e. if meetings start with all microphones muted and webcams disabled).
+Do your customizations in the following files in `/etc/jitsi/meet/DOMAINNAME/`:
+- config.local.js
+- branding/branding.json
+- interface_config.local.js
+- nginx-override.conf
 
-Put your logos and icons into the directory `/etc/jitsi/meet/DOMAINNAME/branding/`
-This directory is accessible via https://DOMAINNAME/branding/
+The directory `/etc/jitsi/meet/DOMAINNAME/branding/` is accessible via https://DOMAINNAME/branding/.
 
 Customizations are kept when running this playbook again and when updating Jitsi Meet.
 

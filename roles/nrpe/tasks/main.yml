@@ -4,8 +4,8 @@
 
 - name: Configure NRPE-Server
   ansible.builtin.template:
-    src: "nrpe_local.cfg.j2"
-    dest: "/etc/nagios/nrpe_local.cfg"
+    src: "jitsi-meet.cfg.j2"
+    dest: "/etc/nagios/nrpe.d/jitsi-meet.cfg"
     owner: root
     group: nagios
     mode: "0640"

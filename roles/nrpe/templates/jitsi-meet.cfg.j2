@@ -5,6 +5,9 @@ command_timeout=600
 
 allowed_hosts=127.0.0.1,{{ nrpe.allowed_hosts | default([]) | join(',') }}
 
+# DNS
+command[check_dns]=/usr/lib/nagios/plugins/check_host -4 ns1.bingo-ev.de
+
 # Disk Space
 command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 15% -c 10% -p /
 command[check_disk_recordings]=/usr/lib/nagios/plugins/check_disk -w 15% -c 10% -p "{{ jibri.storage_dir | default("/tmp/recordings") }}"

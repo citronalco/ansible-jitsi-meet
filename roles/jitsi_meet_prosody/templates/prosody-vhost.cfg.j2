@@ -61,28 +61,21 @@ VirtualHost "{{ inventory_hostname }}"
         key = "/etc/prosody/certs/{{ inventory_hostname }}.key";
         certificate = "/etc/prosody/certs/{{ inventory_hostname }}.crt";
     }
-    av_moderation_component = "avmoderation.{{ inventory_hostname }}"
-    speakerstats_component = "speakerstats.{{ inventory_hostname }}"
-    end_conference_component = "endconference.{{ inventory_hostname }}"
     -- we need bosh
     modules_enabled = {
         "bosh";
         "websocket";
         "smacks";
         "ping"; -- Enable mod_ping
-        "speakerstats";
         "external_services";
+        "features_identity";
         "conference_duration";
-        "end_conference";
         "muc_lobby_rooms";
         "muc_breakout_rooms";
-        "av_moderation";
-        "room_metadata";
     }
     c2s_require_encryption = false
     lobby_muc = "lobby.{{ inventory_hostname }}"
     breakout_rooms_muc = "breakout.{{ inventory_hostname }}"
-    room_metadata_component = "metadata.{{ inventory_hostname }}"
     main_muc = "conference.{{ inventory_hostname }}"
     muc_lobby_whitelist = { "recorder.{{ inventory_hostname }}" } -- Here we can whitelist jibri to enter lobby enabled rooms
 
@@ -168,6 +161,9 @@ Component "endconference.{{ inventory_hostname }}" "end_conference"
     muc_component = "conference.{{ inventory_hostname }}"
 
 Component "avmoderation.{{ inventory_hostname }}" "av_moderation_component"
+    muc_component = "conference.{{ inventory_hostname }}"
+
+Component "filesharing.{{ inventory_hostname }}" "filesharing_component"
     muc_component = "conference.{{ inventory_hostname }}"
 
 Component "lobby.{{ inventory_hostname }}" "muc"

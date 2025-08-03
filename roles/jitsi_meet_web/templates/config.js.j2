@@ -9,7 +9,6 @@ config.hosts.anonymousdomain = 'guest.{{ inventory_hostname }}';
 config.hosts.muc = 'conference.{{ inventory_hostname }}';
 config.bosh = 'https://{{ inventory_hostname }}/http-bind';
 config.websocket = 'wss://{{ inventory_hostname }}/xmpp-websocket';
-config.websocketKeepAliveUrl = 'https://{{ inventory_hostname }}/_unlock';
 config.dynamicBrandingUrl = 'branding/branding.json';
 config.hiddenDomain = 'recorder.{{ inventory_hostname }}';
 config.p2p.stunServers = [

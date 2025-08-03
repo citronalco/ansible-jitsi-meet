@@ -25,4 +25,4 @@ jibri:
 nrpe:
   # Hier den Hostnamen der Monitoring-Server angeben (Default: leer)
   allowed_hosts:
-    - monitoring.bingo-ev.de
+    - monitoring.bingo-ev.de,2a03:4000:5:138:5054:d5ff:fe3e:dcaf,5.45.98.81

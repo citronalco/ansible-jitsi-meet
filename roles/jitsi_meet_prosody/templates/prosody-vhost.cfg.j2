@@ -132,10 +132,6 @@ Component "internal.auth.{{ inventory_hostname }}" "muc"
     muc_room_default_public_jids = true
 
 VirtualHost "auth.{{ inventory_hostname }}"
-    ssl = {
-        key = "/etc/prosody/certs/auth.{{ inventory_hostname }}.key";
-        certificate = "/etc/prosody/certs/auth.{{ inventory_hostname }}.crt";
-    }
     modules_enabled = {
         "limits_exception";
         "smacks";

@@ -1,17 +1,15 @@
-#- name: Install gpg
-#  ansible.builtin.apt:
-#    pkg: ["gpg", "gpg-agent"]
-#    install_recommends: false
-#    update_cache: true
+- name: Install role prerequisites
+  ansible.builtin.package:
+    name: ["gpg", "debconf-utils"]
 
 - name: Add repository key for jisti.org
-  get_url:
+  ansible.builtin.get_url:
     url: "https://download.jitsi.org/jitsi-key.gpg.key"
     dest: "/etc/apt/keyrings/apt.jitsi.org.asc"
     mode: "0644"
 
 - name: Add repository for Jitsi
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [signed-by=/etc/apt/keyrings/apt.jitsi.org.asc] https://download.jitsi.org stable/"
     filename: jitsi
 
@@ -59,7 +57,7 @@
 
 - name: Install nginx, openjdk and jisti-meet
   ansible.builtin.apt:
-    pkg: ["nginx-full", "openjdk-17-jre-headless", "jitsi-meet", "jitsi-meet-turnserver","prosody", "lua-event", "lua-unbound"]
+    pkg: ["nginx-full", "default-jre-headless", "jitsi-meet", "jitsi-meet-turnserver","prosody", "lua-event", "lua-unbound"]
     update_cache: true
     state: latest
     install_recommends: true

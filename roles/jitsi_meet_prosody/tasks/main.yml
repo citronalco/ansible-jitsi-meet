@@ -1,3 +1,7 @@
+- name: Install Prosody modules package, contains mod_log_auth required for fail2ban
+  ansible.builtin.package:
+    name: prosody-modules
+
 - name: Create Prosody vHost configuration
   ansible.builtin.template:
     src: "prosody-vhost.cfg.j2"

@@ -14,6 +14,7 @@
     - jitsi_meet_turnserver
     - jitsi_meet_systemd
     - jitsi_meet_jibri
+    - fail2ban
     - nrpe
     - unattended_upgrades
     - logging

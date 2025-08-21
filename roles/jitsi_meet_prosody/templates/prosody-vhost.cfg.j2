@@ -72,6 +72,7 @@ VirtualHost "{{ inventory_hostname }}"
         "conference_duration";
         "muc_lobby_rooms";
         "muc_breakout_rooms";
+        "log_auth"; -- für fail2ban
     }
     c2s_require_encryption = false
     lobby_muc = "lobby.{{ inventory_hostname }}"

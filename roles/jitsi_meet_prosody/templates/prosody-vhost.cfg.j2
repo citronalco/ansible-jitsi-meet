@@ -66,6 +66,7 @@ VirtualHost "{{ inventory_hostname }}"
         "bosh";
         "websocket";
         "smacks";
+        "speakerstats";
         "ping"; -- Enable mod_ping
         "external_services";
         "features_identity";
@@ -95,7 +96,6 @@ Component "conference.{{ inventory_hostname }}" "muc"
         "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
-        "polls";
         --"token_verification";
         "muc_rate_limit";
         "muc_password_whitelist";
@@ -171,9 +171,10 @@ Component "lobby.{{ inventory_hostname }}" "muc"
     modules_enabled = {
         "muc_hide_all";
         "muc_rate_limit";
-        "polls";
     }
 
 Component "metadata.{{ inventory_hostname }}" "room_metadata_component"
     muc_component = "conference.{{ inventory_hostname }}"
     breakout_rooms_component = "breakout.{{ inventory_hostname }}"
+
+Component "polls.{{ inventory_hostname }}" "polls_component"

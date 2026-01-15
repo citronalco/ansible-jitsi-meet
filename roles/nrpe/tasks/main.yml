@@ -17,6 +17,12 @@
       - nagios-plugins-standard
       - nagios-plugins-contrib
 
+- name: Disable rpcbind
+  ansible.builtin.systemd_service:
+    name: rpcbind.service
+    state: stopped
+    enabled: false
+
 - name: Create directory for local NRPE plugins
   ansible.builtin.file:
     path: "/usr/local/nrpe-plugins/"

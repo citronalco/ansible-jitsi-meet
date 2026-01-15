@@ -1,6 +1,7 @@
 - name: Install Chromium
   ansible.builtin.apt:
     pkg: ["chromium", "chromium-sandbox", "chromium-driver"]
+    install_recommends: false
 
 - name: Install Jibri
   ansible.builtin.apt:

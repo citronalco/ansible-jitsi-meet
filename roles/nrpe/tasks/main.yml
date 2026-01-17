@@ -17,7 +17,7 @@
       - nagios-plugins-standard
       - nagios-plugins-contrib
 
-- name: Disable rpcbind
+- name: Disable rpcbind.service
   ansible.builtin.systemd_service:
     name: rpcbind.service
     state: stopped

@@ -1,7 +1,12 @@
 - name: Install Chromium
   ansible.builtin.apt:
     pkg: ["chromium", "chromium-sandbox", "chromium-driver"]
-    install_recommends: false
+
+- name: Disable avahi-daemon.service
+  ansible.builtin.systemd_service:
+    name: avahi-daemon.service
+    state: stopped
+    enabled: false
 
 - name: Install Jibri
   ansible.builtin.apt:

@@ -13,26 +13,33 @@
     repo: "deb [signed-by=/etc/apt/keyrings/apt.jitsi.org.asc] https://download.jitsi.org stable/"
     filename: jitsi
 
-- name: Preconfigure hostname used by postinst scripts of jitsi-meet-prosody package
+- name: Preconfigure hostname for postinst scripts of jitsi-meet-prosody package
   ansible.builtin.debconf:
     name: jitsi-meet-prosody
     question: jitsi-meet-prosody/jvb-hostname
     vtype: string
     value: "{{ inventory_hostname }}"
 
-- name: Preconfigure hostname used by postinst scripts of jitsi-videobridge package
+- name: Preconfigure hostname for postinst scripts of jitsi-videobridge package
   ansible.builtin.debconf:
     name: jitsi-videobridge
     question: jitsi-videobridge/jvb-hostname
     vtype: string
     value: "{{ inventory_hostname }}"
 
-- name: Preconfigure password used by postinst scripts of jitsi-videobridge package
+- name: Preconfigure jvb secret used to connect to XMPP server as Component. Used by postinst scripts of jitsi-videobridge package
   ansible.builtin.debconf:
     name: jitsi-videobridge
     question: jitsi-videobridge/jvbsecret
     vtype: password
     value: "{{ jvbpwd }}"
+
+- name: Preconfigure password used by postinst scripts of jicofo package
+  ansible.builtin.debconf:
+    name: jicofo
+    question: jicofo/jicofo-authpassword
+    vtype: password
+    value: "{{ jicofopwd }}"
 
 - name: Preconfigure coturn password used by postinst scripts of jitsi-meet-prosody package
   ansible.builtin.debconf:

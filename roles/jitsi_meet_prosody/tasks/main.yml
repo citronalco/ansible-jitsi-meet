@@ -2,6 +2,13 @@
   ansible.builtin.package:
     name: prosody-modules
 
+- name: Restrict Prosody to localhost
+  ansible.builtin.lineinfile:
+    path: "/etc/prosody/prosody.cfg.lua"
+    insertafter: '^-+ Server-wide settings -+$'
+    line: interfaces = { "127.0.0.1", "::1" }
+  notify: Restart prosody
+
 - name: Create Prosody vHost configuration
   ansible.builtin.template:
     src: "prosody-vhost.cfg.j2"
